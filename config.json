@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "parent_dir": "/Desktop/task_management"
+  },
+
+  "daily_log": {
+    "file_structure": {
+      "daily_log_path": "/demo_files/logs"
+    }
+  },
+  "task_management": {
+    "file_structure": {
+      "task_management_path": "/demo_files/tasks",
+      "ordered_subdirs": ["work", "personal"]
+    },
+    "task_header_config": {
+      "status_enum": ["backlog", "planned", "in_progress", "closed"],
+      "urgency_enum": ["low", "medium", "high"],
+      "priority_enum": ["low", "medium", "high"],
+      "tags_enum": [
+        "chore",
+        "bug",
+        "feature",
+        "research",
+        "admin",
+        "meeting",
+        "other"
+      ]
+    }
+  }
+}
