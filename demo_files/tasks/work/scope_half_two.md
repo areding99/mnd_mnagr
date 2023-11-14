@@ -9,7 +9,7 @@ id: 57eb7457-3633-4334-ab39-806dc9194ae2
 
 |             |                  |
 | ----------- | ---------------- |
-| requestor:  | andy             |
+| requestor   | andy             |
 | subscribers | andy, my_manager |
 | status      | backlog          |
 | urgency     | low              |

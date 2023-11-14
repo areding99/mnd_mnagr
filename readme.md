@@ -3,7 +3,7 @@
 
 # overview
 
-A library of scripts & templates for streamlining pkm & task management. These are the tools I use to manage my own tasks & pkm. Users will likely have other preferences: this should just be considered a starting point for building your own tools.
+A library of scripts & templates for streamlining pkm & task management. These are the tools I use to manage my own tasks & pkm, and also a means of learning python
 
 # installation
 

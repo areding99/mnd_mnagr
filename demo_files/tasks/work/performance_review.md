@@ -9,7 +9,7 @@ id: 21db8ea6-4296-45ac-953c-422c440dc100
 
 |             |                  |
 | ----------- | ---------------- |
-| requestor:  | my_manager       |
+| requestor   | my_manager       |
 | subscribers | andy, my_manager |
 | status      | planned          |
 | urgency     | medium           |

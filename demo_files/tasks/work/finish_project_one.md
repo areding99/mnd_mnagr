@@ -7,15 +7,15 @@ id: f217bfb5-c99e-4c48-958d-99b63935426c
 
 # about
 
-|             |             |
-| ----------- | ----------- |
-| requestor:  | andy        |
-| subscribers | my_manager  |
-| status      | in_progress |
-| urgency     | high        |
-| priority    | low         |
-| tags        | feature     |
-| due         | 2023-11-21  |
+|             |                |
+| ----------- | -------------- |
+| requestor   | andy           |
+| subscribers | my_manager, me |
+| status      | in_progress    |
+| urgency     | high           |
+| priority    | low            |
+| tags        | feature        |
+| due         | 2023-11-21     |
 
 # overview
 

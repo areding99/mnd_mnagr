@@ -9,7 +9,7 @@ id: 2952f484-7838-4e17-a0d4-ae208208485a
 
 |             |             |
 | ----------- | ----------- |
-| requestor:  | andy        |
+| requestor   | andy        |
 | subscribers | andy, marin |
 | status      | closed      |
 | urgency     | high        |

@@ -1,8 +1,13 @@
+# if _main_ == "_main_", this is running as a script, not a module
+# this may not be necessary as it should probably always be run as a script
+if __name__ == "__main__":
+  import sys
+  print(sys.argv[1])
+
+
 import sys, os, datetime, uuid, task_integration
 
-sys.path.append('../task_management')
-
-from lib.config_parser import ConfigParser
+from library.config_parser import ConfigParser
 
 cp = ConfigParser()
 config = cp.get_config()
@@ -15,58 +20,25 @@ tasks_relative_path = "/demo_files/tasks" # move to config
 
 # helpers for setting up today's log
 def write_header(f_name, date):
-  f_io = open(f_name, 'w+')
+  with open(f_name, 'w+') as f_io:
+    if (f_io.read() != ""):
+      print("file is not empty")
+      return
+
+    f_io.write("---\n")
+    f_io.write("title: "+today+"\n")
+    f_io.write("path: "+daily_log_relative_path[1:]+"/"+str(date.year)+"/"+today_log_name+"\n")
+    f_io.write("created: "+str(date.date())+" "+str(date.time())[:5]+"\n")
+    f_io.write("id: "+str(uuid.uuid4())+"\n")
+    f_io.write("---\n\n")
+    f_io.write("# "+get_weekday(date)+", "+str(date.date())+" "+"\n")
   
-  if (f_io.read() != ""):
-    print("file is not empty")
-    return
-
-  f_io.write("---\n")
-  f_io.write("title: "+today+"\n")
-  f_io.write("path: "+daily_log_relative_path[1:]+"/"+str(date.year)+"/"+today_log_name+"\n")
-  f_io.write("created: "+str(date.date())+" "+str(date.time())[:5]+"\n")
-  f_io.write("id: "+str(uuid.uuid4())+"\n")
-  f_io.write("---\n\n")
-  f_io.write("# "+get_weekday(date)+", "+str(date.date())+" "+"\n")
-
-  f_io.close()
-
-
-
 
 def append_tasks_section(f_name, sections):
-  f_io = open(f_name, 'a')
-
-  f_io.write("\n# Tasks\n\n")
-
-  # eventually sections should set in config with order
-  os.chdir(os.path.expanduser('~')+parent_dir+tasks_relative_path)
-
-  sections = os.listdir()
-
-  # for each section
-  for section in sections:
-    f_io.write("## "+section+"\n\n")
-
-    os.chdir(section)
-    tasks = os.listdir()
-
-    for task in tasks:
-      f_io.write("- [ ] "+task+"\n")
-
-    f_io.write("\n")
-
-    os.chdir("..")
-
-  f_io.close()
-
-
-
-
+  pass
 
 def read_tasks(f_name):
-  f_io = open(f_name)
-
+  pass
 
 
 def get_weekday(date):
@@ -86,8 +58,6 @@ def get_weekday(date):
     return "Saturday"
   else:
     return "Sunday"
-
-
 
 
 def nav_to_year(date):
@@ -145,6 +115,9 @@ def get_outstanding_tasks():
 
 
 # START OF SCRIPT
+print(os.getcwd())
+print(os.path.expanduser('~'))
+
 
 date = datetime.datetime.now()
 year = nav_to_year(date)

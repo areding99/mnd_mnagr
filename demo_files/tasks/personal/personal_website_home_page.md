@@ -9,7 +9,7 @@ id: 3e127e25-02c0-4803-a48f-4530b49ce9d7
 
 |             |         |
 | ----------- | ------- |
-| requestor:  | andy    |
+| requestor   | andy    |
 | subscribers | n/a     |
 | status      | planned |
 | urgency     | low     |
