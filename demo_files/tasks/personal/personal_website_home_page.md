@@ -15,7 +15,7 @@ id: 3e127e25-02c0-4803-a48f-4530b49ce9d7
 | urgency     | low     |
 | priority    | medium  |
 | tags        | feature |
-| due         | n/a     |
+| due         | 2020    |
 
 # overview
 

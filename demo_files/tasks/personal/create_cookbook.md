@@ -13,7 +13,7 @@ id: d4d4e3ba-51ff-470e-9832-224ec8731027
 | subscribers | andy, marin |
 | status      | in_progress |
 | urgency     | low         |
-| priority    | low         |
+| priority    | high        |
 | tags        | feature     |
 | due         | n/a         |
 

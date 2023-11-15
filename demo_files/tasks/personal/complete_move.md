@@ -12,7 +12,7 @@ id: 2952f484-7838-4e17-a0d4-ae208208485a
 | requestor   | andy        |
 | subscribers | andy, marin |
 | status      | closed      |
-| urgency     | high        |
+| urgency     | medium      |
 | priority    | medium      |
 | tags        | chore       |
 | due         | 2023-11-01  |

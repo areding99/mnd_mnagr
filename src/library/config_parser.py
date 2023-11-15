@@ -16,14 +16,15 @@ class TasksFS(NamedTuple):
   ordered_subdirs: list[str]
 
 class TaskConfig(NamedTuple):
-  status_enum: list[str]
-  urgency_enum: list[str]
-  priority_enum: list[str]
-  tags_enum: list[str]
+  status: list[str]
+  urgency: list[str]
+  priority: list[str]
+  tags: list[str]
 
 class TasksSection(NamedTuple):
   file_structure: TasksFS
   task_config: TaskConfig
+  sort_order: list[str]
 
 class Config(NamedTuple):
   lib: LibSection
@@ -73,25 +74,30 @@ class ConfigParser(object):
     if not is_list_of_str(tasks_fs_ordered_subdirs):
       raise Exception('config does not match expected format')
 
-    tasks_config_status_enum = config_json['tasks']['task_config']['status_enum']
+    tasks_config_status_enum = config_json['tasks']['task_config']['status']
 
     if not is_list_of_str(tasks_config_status_enum):
       raise Exception('config does not match expected format') 
 
-    tasks_config_urgency_enum = config_json['tasks']['task_config']['urgency_enum']
+    tasks_config_urgency_enum = config_json['tasks']['task_config']['urgency']
 
     if not is_list_of_str(tasks_config_urgency_enum):
       raise Exception('config does not match expected format')
 
-    tasks_config_priority_enum = config_json['tasks']['task_config']['priority_enum']
+    tasks_config_priority_enum = config_json['tasks']['task_config']['priority']
 
     if not is_list_of_str(tasks_config_priority_enum):
       raise Exception('config does not match expected format')
 
-    tasks_config_tags_enum = config_json['tasks']['task_config']['tags_enum']
+    tasks_config_tags_enum = config_json['tasks']['task_config']['tags']
 
     if not is_list_of_str(tasks_config_tags_enum):
       raise Exception('config does not match expected format')  
+
+    sort_order = config_json['tasks']['task_sort_order']    
+
+    if not is_list_of_str(sort_order):
+      raise Exception('config does not match expected format')
 
     return Config(
       lib=LibSection(
@@ -108,11 +114,12 @@ class ConfigParser(object):
           ordered_subdirs=tasks_fs_ordered_subdirs
         ),
         task_config=TaskConfig(
-          status_enum=tasks_config_status_enum,
-          urgency_enum=tasks_config_urgency_enum,
-          priority_enum=tasks_config_priority_enum,
-          tags_enum=tasks_config_tags_enum
-        )
+          status=tasks_config_status_enum,
+          urgency=tasks_config_urgency_enum,
+          priority=tasks_config_priority_enum,
+          tags=tasks_config_tags_enum
+        ),
+        sort_order=sort_order
       )
     )
 

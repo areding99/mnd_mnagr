@@ -15,7 +15,7 @@ id: 21db8ea6-4296-45ac-953c-422c440dc100
 | urgency     | medium           |
 | priority    | high             |
 | tags        | admin            |
-| due         | n/a              |
+| due         | 0                |
 
 # overview
 

@@ -14,10 +14,10 @@
       "ordered_subdirs": ["work", "personal"]
     },
     "task_config": {
-      "status_enum": ["backlog", "planned", "in_progress", "closed"],
-      "urgency_enum": ["low", "medium", "high"],
-      "priority_enum": ["low", "medium", "high"],
-      "tags_enum": [
+      "status": ["backlog", "planned", "in_progress", "closed"],
+      "urgency": ["high", "medium", "low"],
+      "priority": ["high", "medium", "low"],
+      "tags": [
         "chore",
         "bug",
         "feature",
@@ -26,6 +26,7 @@
         "meeting",
         "other"
       ]
-    }
+    },
+    "task_sort_order": ["urgency", "priority", "due"]
   }
 }
