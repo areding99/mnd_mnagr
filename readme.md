@@ -1,11 +1,13 @@
----
----
-
 # overview
 
 A library of scripts & templates for streamlining pkm & task management. These are the tools I use to manage my own tasks & pkm, and also a means of learning python
 
 # installation
+
+1. download the repo & run `pip install -r requirements.txt`
+1. run the utility of your choice using `python3 ./main.py -flag`
+1. to make running more concise & access utilities anywhere, make the file executable (`chmod +x main.py`) and add its directory to your path
+   1. or, even better, create a symlink to main.py, make the symlink executable, and add the path to the symlink to your path
 
 # features
 
