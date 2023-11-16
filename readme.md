@@ -23,6 +23,7 @@ A library of scripts & templates for streamlining pkm & task management. These a
 - [] snippets for task creation
 - [] cli tool for task creation
   - config file for tags, status, etc
+- [] cli tool for tasks due today
 
 ## pkm
 

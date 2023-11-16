@@ -25,10 +25,10 @@ class TaskInfo(NamedTuple):
 
 
 def retrieve_tasks(parent_dir: str, task_path: str, ordered_subdirs: list[str]) -> dict[str, list[list[str]]]:
+  cwd = os.getcwd()
   os.chdir(os.path.expanduser('~')+parent_dir+task_path)
 
   sections: list[str] = ordered_subdirs
-
   sections_with_tasks: dict[str, list[list[str]]] = {}
   
   for section in sections:
@@ -42,6 +42,7 @@ def retrieve_tasks(parent_dir: str, task_path: str, ordered_subdirs: list[str]) 
       sections_with_tasks[section] = tasks
       os.chdir("..")
 
+  os.chdir(cwd)
   return sections_with_tasks 
 
 
@@ -68,6 +69,7 @@ def parse_metadata_section(section: list[str]) -> TaskMetadata:
         id = val
 
   return TaskMetadata(title, path, created, id)
+
 
 
 def parse_about_section(section: list[str]) -> TaskAbout:
@@ -135,7 +137,7 @@ def parse_task_info(raw_task: list[str]) -> TaskInfo:
 
 
 
-def get_tasks_and_info() -> None:
+def get_task_infos_by_section() -> dict[str, list[TaskInfo]] | None:
   """returns a list of tasks names, organized by section & priority"""
   config: Config | None = ConfigParser().get_config()
 
@@ -152,7 +154,6 @@ def get_tasks_and_info() -> None:
     else:
       attribute_sort_order[attr] = []
 
-
   raw_tasks_by_section = retrieve_tasks(lib_config.parent_dir, task_mgmt_config.file_structure.tasks_path, task_mgmt_config.file_structure.ordered_subdirs)
 
   parsed_tasks_by_section: dict[str, list[TaskInfo]] = {}
@@ -163,34 +164,33 @@ def get_tasks_and_info() -> None:
       parsed_tasks.append(parse_task_info(raw_task))
     parsed_tasks_by_section[section] = sort_tasks(parsed_tasks, task_mgmt_config.sort_order, attribute_sort_order)
 
-    
-  for section in parsed_tasks_by_section:
-    print(section)
-    for task in parsed_tasks_by_section[section]:
-      print(task.metadata.title)
+  return parsed_tasks_by_section
 
-def subsection_tasks():
+
+
+# TODO
+def split_tasks_by_subsection():
   """split tasks into subsections based on attributes (i.e. tags, status, etc.)"""
   pass
 
+
+
 def sort_tasks(tasks: list[TaskInfo], sort_order: list[str], intra_attr_sort_order: dict[str, list[str]]) -> list[TaskInfo]:
   return sort_tasks_impl(tasks, sort_order, intra_attr_sort_order, 0)
+
+
 
 def sort_tasks_impl(tasks: list[TaskInfo], attrs: list[str], intra_attr_sort_order: dict[str, list[str]], attr_idx: int) -> list[TaskInfo]:
   """Recursively bucket sort tasks according sort order by attribute."""
   if (len(tasks) <= 1 or attr_idx >= len(attrs)):
     return tasks
 
-
   attr: str = attrs[attr_idx]
   attr_vals = intra_attr_sort_order[attr]
-
-  # if there is no defined order on an enum of attributes, sort descending (for now
-
   attr_groups: dict[str, list[TaskInfo]] = {}
   attr_groups['other'] = []
   
-  # bucket by attr
+  # bucket by attribute val
   for task in tasks:
     if hasattr(task.about_section, attr):
       attr_val = getattr(task.about_section, attr)
@@ -201,10 +201,9 @@ def sort_tasks_impl(tasks: list[TaskInfo], attrs: list[str], intra_attr_sort_ord
           attr_groups[attr_val] = [task]
       else:
         attr_groups['other'].append(task)
-      
     else: 
       # this means task doesn't have the attribute at all while the above 'other' classification just means the attribute value doesn't have a defined sort order
-      raise Exception('task does not have attribute '+attr)
+      raise Exception('task does not have attribute ' + attr)
 
   sorted_tasks: list[TaskInfo] = []
 
@@ -214,20 +213,13 @@ def sort_tasks_impl(tasks: list[TaskInfo], attrs: list[str], intra_attr_sort_ord
     for task in sort_tasks_impl(attr_groups[val], attrs, intra_attr_sort_order, attr_idx+1):
       sorted_tasks.append(task)
   else:
-    # these are tasks that had no attribute value - they were either incorrectly defined or have no defined sort order
-    # sort them in ascending order for now (i.e. on date due)
+    # these are tasks for attributes without a sort order defined on values (i.e. date due)
+    # sort them in ascending order for now 
     others = attr_groups['other']
-    # sort others on attribute
     others.sort(key=lambda t: getattr(t.about_section, attr))
-
 
     for task in others:
       sorted_tasks.append(task)
 
   return sorted_tasks
-
-
-
-get_tasks_and_info()
-
 

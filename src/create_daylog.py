@@ -1,28 +1,16 @@
-# if _main_ == "_main_", this is running as a script, not a module
-# this may not be necessary as it should probably always be run as a script
-if __name__ == "__main__":
-  import sys
-  print(sys.argv[1])
+# if _main_ == "_main_", this is running as a script, not a module # this may not be necessary as it should probably always be run as a script
+# if __name__ == "__main__":
+#   import sys
+#   print(sys.argv[1])
 
-
-import sys, os, datetime, uuid, task_integration
-
+import os, datetime, uuid
 from library.config_parser import ConfigParser
+from task_integration import get_task_infos_by_section
 
-cp = ConfigParser()
-config = cp.get_config()
-
-# constants
-parent_dir = "/Desktop/task_management" # probably no need for this
-daily_log_relative_path = "/demo_files/logs" # move to config
-tasks_relative_path = "/demo_files/tasks" # move to config
-
-
-# helpers for setting up today's log
-def write_header(f_name, date):
+def write_header(f_name, date, daily_log_relative_path) -> None:
   with open(f_name, 'w+') as f_io:
     if (f_io.read() != ""):
-      print("file is not empty")
+      print("file is not empty, header should be the first thing written")
       return
 
     f_io.write("---\n")
@@ -31,17 +19,25 @@ def write_header(f_name, date):
     f_io.write("created: "+str(date.date())+" "+str(date.time())[:5]+"\n")
     f_io.write("id: "+str(uuid.uuid4())+"\n")
     f_io.write("---\n\n")
-    f_io.write("# "+get_weekday(date)+", "+str(date.date())+" "+"\n")
+    f_io.write("# "+get_weekday(date)+", "+str(date.date())+"\n\n")
   
+def write_tasks(f_name) -> None:
+  task_infos = get_task_infos_by_section() 
 
-def append_tasks_section(f_name, sections):
-  pass
+  with open(f_name, 'a+') as f_io:
+    f_io.write("# tasks\n\n")
 
-def read_tasks(f_name):
-  pass
+    for section in task_infos:
+      f_io.write("## "+section+"\n\n")
+      for task in task_infos[section]:
+        f_io.write("-[ ] ["+task.metadata.title+"](/"+task.metadata.path+") \n")
+      f_io.write("\n\n")
+
+def write_todos(f_name) -> None:
+  return
 
 
-def get_weekday(date):
+def get_weekday(date) -> str:
   today = date.weekday()
 
   if today == 0:
@@ -60,78 +56,84 @@ def get_weekday(date):
     return "Sunday"
 
 
-def nav_to_year(date):
-  os.chdir(os.path.expanduser('~')+parent_dir+daily_log_relative_path)
 
+def nav_to_year(date, parent_dir, daily_log_relative_path) -> int:
+  """returns the current year & navigates to the year's directory in the daily log"""
+  os.chdir(os.path.expanduser('~')+parent_dir+daily_log_relative_path)
   year = date.year
 
   if (not os.path.isdir(str(year))):
     os.mkdir(str(year))
 
   os.chdir(str(year))
-
   return year
 
 
 
-def get_yesterday(year):
+def get_yesterday_f_name(year) -> str | None:
   if (len(os.listdir()) > 0):
     return max(os.listdir())
 
-  # check last year for a note
+  # check last year for a note if there's not one this year
   os.chdir("..")
   previous_year_dir = str(year-1)
 
   if (not os.path.isdir(previous_year_dir)):
     os.chdir(str(year))
-    return 
-  else:
-    os.chdir(previous_year_dir)
+    return None
 
-    if (len(os.listdir()) == 0):
-      return
+  os.chdir(previous_year_dir)
 
-    yesterday = max(os.listdir())
-      
-    os.chdir("..")
-    os.chdir(str(year))
+  if (len(os.listdir()) == 0):
 
-    return yesterday
+    return None
 
-def get_yesterday_summary(year):
-  yesterday = get_yesterday(year)
+  yesterday = max(os.listdir())
+    
+  os.chdir("..")
+  os.chdir(str(year))
+
+  return yesterday
+
+
+
+def get_yesterday_summary(year) -> str | None:
+  yesterday = get_yesterday_f_name(year)
 
   if (yesterday == None):
     # no summary for yesterday
     return 
   
   # get yesterday's summary
-
-def get_outstanding_tasks():
-
-
-  return
+  return ""
 
 
 
 # START OF SCRIPT
-print(os.getcwd())
-print(os.path.expanduser('~'))
 
+cp = ConfigParser()
+config = cp.get_config()
+
+if not config:
+  print("config is empty")
+  exit(1)
 
 date = datetime.datetime.now()
-year = nav_to_year(date)
+year = nav_to_year(date, config.lib.parent_dir, config.daily_log.file_structure.daily_log_path)
 
 yesterday_summary = get_yesterday_summary(year)
 
 today = str(date.date())
 today_log_name = today+".md"
 
-write_header(today_log_name, date)
+# for now, overwrite
+# if (os.path.isfile(today_log_name)):
+#   print("you've already created a daily log for today")
+#   exit(1)
 
+write_header(today_log_name, date, config.daily_log.file_structure.daily_log_path)
+write_tasks(today_log_name)
 
-
-# append_tasks_section()
 
 # get outstanding tasks
 
@@ -140,10 +142,6 @@ write_header(today_log_name, date)
 
 
 
-# for now, overwrite
-# if (os.path.isfile(today_log_name)):
-#   print("you've already created a daily log for today")
-#   exit(1)
 
 
 

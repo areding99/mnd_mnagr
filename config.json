@@ -28,5 +28,10 @@
       ]
     },
     "task_sort_order": ["urgency", "priority", "due"]
+  },
+  "todos": {
+    "file_structure": {
+      "todos_path": "/demo_files/todos"
+    }
   }
 }

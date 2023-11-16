@@ -26,6 +26,12 @@ class TasksSection(NamedTuple):
   task_config: TaskConfig
   sort_order: list[str]
 
+class TodosFS(NamedTuple):
+  todos_path: str
+
+class TodoSection(NamedTuple):
+  file_structure: TodosFS
+
 class Config(NamedTuple):
   lib: LibSection
   daily_log: DailyLogSection
@@ -57,7 +63,6 @@ class ConfigParser(object):
 
     if not isinstance(lib_section_parent_dir, str):
       raise Exception('config does not match expected format')
-
 
     daily_log_fs_path = config_json['daily_log']['file_structure']['daily_log_path']
 
@@ -99,6 +104,13 @@ class ConfigParser(object):
     if not is_list_of_str(sort_order):
       raise Exception('config does not match expected format')
 
+    todos_fs_path = config_json['todos']['file_structure']['todos_path']
+
+    if not isinstance(todos_fs_path, str):
+      raise Exception('config does not match expected format')
+
+
+
     return Config(
       lib=LibSection(
         parent_dir=lib_section_parent_dir
@@ -120,6 +132,11 @@ class ConfigParser(object):
           tags=tasks_config_tags_enum
         ),
         sort_order=sort_order
+      ),
+      todos=TodoSection(
+        file_structure=TodosFS(
+          todos_path=todos_fs_path
+        )
       )
     )
 
