@@ -1,15 +1,14 @@
-import os, datetime, uuid
+import os, datetime, uuid, dotenv
 if __name__ == "__main__":
   import sys
-  sys.path.append(os.path.expanduser('~')+'/Desktop/task_management/')
+  dotenv.load_dotenv()
+  sys.path.append(os.environ['PROJECT_ROOT'])
 # if not running as a script, the parent directory should already be added to path
   
-
-
 from mndmngr.config.config_parser import ConfigParser
 from mndmngr.gsd.task_and_todo.task.task_integration import get_task_infos_by_section
 
-def write_header(f_name: str, date: datetime.datetime, daily_log_relative_path: str) -> None:
+def write_header(f_name: str, date: datetime.datetime) -> None:
   with open(f_name, 'w+') as f_io:
     if (f_io.read() != ""):
       print("file is not empty, header should be the first thing written")
@@ -17,7 +16,7 @@ def write_header(f_name: str, date: datetime.datetime, daily_log_relative_path: 
 
     f_io.write("---\n")
     f_io.write("title: "+today+"\n")
-    f_io.write("path: "+daily_log_relative_path[1:]+"/"+str(date.year)+"/"+today_log_name+"\n")
+    f_io.write("path: "+os.environ['DAILY_LOG_REL_PATH']+"/"+str(date.year)+"/"+today_log_name+"\n")
     f_io.write("created: "+str(date.date())+" "+str(date.time())[:5]+"\n")
     f_io.write("id: "+str(uuid.uuid4())+"\n")
     f_io.write("---\n\n")
@@ -64,10 +63,9 @@ def get_weekday(date: datetime.datetime) -> str:
     return "Sunday"
 
 
-
-def nav_to_year(date: datetime.datetime, parent_dir: str, daily_log_relative_path: str) -> int:
+def nav_to_year(date: datetime.datetime) -> int:
   """returns the current year & navigates to the year's directory in the daily log"""
-  os.chdir(os.path.expanduser('~')+parent_dir+daily_log_relative_path)
+  os.chdir(os.environ['DAILY_LOG_PATH'])
   year = date.year
 
   if (not os.path.isdir(str(year))):
@@ -125,7 +123,8 @@ if not config:
   exit(1)
 
 date = datetime.datetime.now()
-year = nav_to_year(date, config.lib.parent_dir, config.daily_log.file_structure.daily_log_path)
+year = nav_to_year(date)
+
 
 yesterday_summary = get_yesterday_summary(year)
 
@@ -138,7 +137,7 @@ today_log_name = today+".md"
 #   print("you've already created a daily log for today")
 #   exit(1)
 
-write_header(today_log_name, date, config.daily_log.file_structure.daily_log_path)
+write_header(today_log_name, date)
 write_tasks(today_log_name)
 # write_todos
 # write_today_summary

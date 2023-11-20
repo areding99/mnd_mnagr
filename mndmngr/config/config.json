@@ -1,14 +1,6 @@
 {
-  "daily_log": {
-    "file_structure": {
-      "daily_log_path": "/demo_files/logs"
-    }
-  },
   "tasks": {
-    "file_structure": {
-      "tasks_path": "/demo_files/tasks",
-      "ordered_subdirs": ["work", "personal"]
-    },
+    "task_subdirs_ordered": ["work", "personal"],
     "task_config": {
       "status": ["backlog", "planned", "in_progress", "closed"],
       "urgency": ["high", "medium", "low"],
@@ -24,10 +16,5 @@
       ]
     },
     "task_sort_order": ["urgency", "priority", "due"]
-  },
-  "todos": {
-    "file_structure": {
-      "todos_path": "/demo_files/todos"
-    }
   }
 }

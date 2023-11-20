@@ -1,16 +1,5 @@
 import json, os
-
 from typing import NamedTuple, Any, TypeGuard, Self
-
-class DailyLogFS(NamedTuple):
-  daily_log_path: str
-
-class DailyLogSection(NamedTuple):
-  file_structure: DailyLogFS
-
-class TasksFS(NamedTuple):
-  tasks_path: str
-  ordered_subdirs: list[str]
 
 class TaskConfig(NamedTuple):
   status: list[str]
@@ -19,20 +8,12 @@ class TaskConfig(NamedTuple):
   tags: list[str]
 
 class TasksSection(NamedTuple):
-  file_structure: TasksFS
   task_config: TaskConfig
-  sort_order: list[str]
-
-class TodosFS(NamedTuple):
-  todos_path: str
-
-class TodoSection(NamedTuple):
-  file_structure: TodosFS
+  task_subdirs_ordered: list[str]
+  task_sort_order: list[str]
 
 class Config(NamedTuple):
-  daily_log: DailyLogSection
   tasks: TasksSection
-  todos: TodoSection
 
 class ConfigParser(object):
   _instance = None
@@ -56,20 +37,10 @@ class ConfigParser(object):
   def parse_config(config_json: Any) -> Config:
     if (not config_json):
       raise Exception('config is empty')
-    
-    daily_log_fs_path = config_json['daily_log']['file_structure']['daily_log_path']
 
-    if not isinstance(daily_log_fs_path, str):
-      raise Exception('config does not match expected format')
+    task_subdirs_ordered = config_json['tasks']['task_subdirs_ordered']
 
-    tasks_fs_path = config_json['tasks']['file_structure']['tasks_path']
-
-    if not isinstance(tasks_fs_path, str):
-      raise Exception('config does not match expected format')
-
-    tasks_fs_ordered_subdirs = config_json['tasks']['file_structure']['ordered_subdirs']
-
-    if not is_list_of_str(tasks_fs_ordered_subdirs):
+    if not is_list_of_str(task_subdirs_ordered):
       raise Exception('config does not match expected format')
 
     tasks_config_status_enum = config_json['tasks']['task_config']['status']
@@ -97,35 +68,18 @@ class ConfigParser(object):
     if not is_list_of_str(sort_order):
       raise Exception('config does not match expected format')
 
-    todos_fs_path = config_json['todos']['file_structure']['todos_path']
-
-    if not isinstance(todos_fs_path, str):
-      raise Exception('config does not match expected format')
 
     return Config(
-      daily_log=DailyLogSection(
-        file_structure=DailyLogFS(
-          daily_log_path=daily_log_fs_path
-        )
-      ),
       tasks=TasksSection(
-        file_structure=TasksFS(
-          tasks_path=tasks_fs_path,
-          ordered_subdirs=tasks_fs_ordered_subdirs
-        ),
+        task_subdirs_ordered=task_subdirs_ordered,
         task_config=TaskConfig(
           status=tasks_config_status_enum,
           urgency=tasks_config_urgency_enum,
           priority=tasks_config_priority_enum,
           tags=tasks_config_tags_enum
         ),
-        sort_order=sort_order
+        task_sort_order=sort_order
       ),
-      todos=TodoSection(
-        file_structure=TodosFS(
-          todos_path=todos_fs_path
-        )
-      )
     )
 
 # TODO move this into its own module -
