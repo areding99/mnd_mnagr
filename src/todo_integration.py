@@ -1,5 +1,5 @@
 import os, uuid
-from library.config_parser import ConfigParser, Config
+from src.library.config_parser import ConfigParser, Config
 
 
 def get_todos_by_section() -> dict[str, list[str]] | None:

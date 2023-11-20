@@ -36,6 +36,7 @@ class Config(NamedTuple):
   lib: LibSection
   daily_log: DailyLogSection
   tasks: TasksSection
+  todos: TodoSection
 
 class ConfigParser(object):
   _instance = None
