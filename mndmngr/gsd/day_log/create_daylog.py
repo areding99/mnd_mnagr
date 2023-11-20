@@ -1,8 +1,13 @@
 import os, datetime, uuid
-from library.config_parser import ConfigParser
-from task_integration import get_task_infos_by_section
+if __name__ == "__main__":
+  # setting root of parent dir should happen in script runner & this should set path to the env var created there
+  import sys
+  sys.path.append(os.path.expanduser('~')+'/Desktop/task_management/')
 
-def write_header(f_name, date, daily_log_relative_path) -> None:
+from mndmngr.config.config_parser import ConfigParser
+from mndmngr.gsd.task_and_todo.task.task_integration import get_task_infos_by_section
+
+def write_header(f_name: str, date: datetime.datetime, daily_log_relative_path: str) -> None:
   with open(f_name, 'w+') as f_io:
     if (f_io.read() != ""):
       print("file is not empty, header should be the first thing written")
@@ -16,8 +21,12 @@ def write_header(f_name, date, daily_log_relative_path) -> None:
     f_io.write("---\n\n")
     f_io.write("# "+get_weekday(date)+", "+str(date.date())+"\n\n")
   
-def write_tasks(f_name) -> None:
+def write_tasks(f_name: str) -> None:
   task_infos = get_task_infos_by_section() 
+
+  if (not task_infos):
+    print("no tasks found, skipping...")
+    return None
 
   with open(f_name, 'a+') as f_io:
     f_io.write("# tasks\n\n")
@@ -28,11 +37,13 @@ def write_tasks(f_name) -> None:
         f_io.write("-[ ] ["+task.metadata.title+"](/"+task.metadata.path+") \n")
       f_io.write("\n\n")
 
-def write_todos(f_name) -> None:
-  return
+  return None
+
+# def write_todos(f_name) -> None:
+#   return
 
 
-def get_weekday(date) -> str:
+def get_weekday(date: datetime.datetime) -> str:
   today = date.weekday()
 
   if today == 0:
@@ -52,7 +63,7 @@ def get_weekday(date) -> str:
 
 
 
-def nav_to_year(date, parent_dir, daily_log_relative_path) -> int:
+def nav_to_year(date: datetime.datetime, parent_dir: str, daily_log_relative_path: str) -> int:
   """returns the current year & navigates to the year's directory in the daily log"""
   os.chdir(os.path.expanduser('~')+parent_dir+daily_log_relative_path)
   year = date.year
@@ -63,9 +74,7 @@ def nav_to_year(date, parent_dir, daily_log_relative_path) -> int:
   os.chdir(str(year))
   return year
 
-
-
-def get_yesterday_f_name(year) -> str | None:
+def get_yesterday_f_name(year: int) -> str | None:
   if (len(os.listdir()) > 0):
     return max(os.listdir())
 
@@ -92,12 +101,12 @@ def get_yesterday_f_name(year) -> str | None:
 
 
 
-def get_yesterday_summary(year) -> str | None:
+def get_yesterday_summary(year: int) -> str | None:
   yesterday = get_yesterday_f_name(year)
 
   if (yesterday == None):
     # no summary for yesterday
-    return 
+    return None
   
   # get yesterday's summary
   return ""
@@ -121,18 +130,17 @@ yesterday_summary = get_yesterday_summary(year)
 today = str(date.date())
 today_log_name = today+".md"
 
-# for now, overwrite
+# for now, overwrite (i.e. leave following commented out)
+
 # if (os.path.isfile(today_log_name)):
 #   print("you've already created a daily log for today")
 #   exit(1)
 
 write_header(today_log_name, date, config.daily_log.file_structure.daily_log_path)
 write_tasks(today_log_name)
-
-
-# get outstanding tasks
-
-# set up new day
+# write_todos
+# write_today_summary
+# write_yesterday_summary
 
 
 

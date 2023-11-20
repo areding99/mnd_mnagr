@@ -1,6 +1,6 @@
-import json
+import json, os
 
-from typing import NamedTuple, Any, TypeGuard
+from typing import NamedTuple, Any, TypeGuard, Self
 
 class LibSection(NamedTuple):
   parent_dir: str
@@ -41,7 +41,8 @@ class Config(NamedTuple):
 class ConfigParser(object):
   _instance = None
   config: Config | None = None
-  def __new__(cls):
+
+  def __new__(cls) -> Self:
     if not isinstance(cls._instance, cls):
       cls._instance = object.__new__(cls)
     return cls._instance
@@ -50,7 +51,7 @@ class ConfigParser(object):
     if (self.config is not None):
       return self.config
 
-    with open("./config.json") as f_io:
+    with open("./mndmngr/config/config.json") as f_io:
       self.config = ConfigParser.parse_config(json.load(f_io))
 
     return self.config
@@ -110,8 +111,6 @@ class ConfigParser(object):
     if not isinstance(todos_fs_path, str):
       raise Exception('config does not match expected format')
 
-
-
     return Config(
       lib=LibSection(
         parent_dir=lib_section_parent_dir
@@ -144,17 +143,3 @@ class ConfigParser(object):
 # TODO move this into its own module -
 def is_list_of_str(obj: object) -> TypeGuard[list[str]]:
   return isinstance(obj, list) and all(isinstance(i, str) for i in obj)
-
-
-
-
-
-
-     
-   
-
-
-
-
-
-

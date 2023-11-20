@@ -1,6 +1,6 @@
 import os, re
 from typing import NamedTuple
-from src.library.config_parser import ConfigParser, Config
+from mndmngr.config.config_parser import ConfigParser, Config
 
 # types
 class TaskMetadata(NamedTuple):
@@ -174,7 +174,7 @@ def get_task_infos_by_section() -> dict[str, list[TaskInfo]] | None:
 # TODO
 def split_tasks_by_subsection():
   """split tasks into subsections based on attributes (i.e. tags, status, etc.)"""
-  pass
+  pass 
 
 
 

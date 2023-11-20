@@ -1,8 +1,14 @@
 # overview
 
-A library of scripts & templates for streamlining pkm & task management. These are the tools I use to manage my own tasks & pkm, and also a means of learning python
+A library of scripts & templates for streamlining pkm & task management.
+
+# note:
+
+This project is a means for my learning python - seems I'm at the point where each day I learn something new & spend a good deal of time revising what I did the day before. This is not currently recommended for use/reference.
 
 # installation
+
+<!-- this should go in the install script -->
 
 1. download the repo & run `pip install -r requirements.txt`
 1. run the utility of your choice using `python3 ./main.py -flag`
