@@ -1,8 +1,10 @@
 import os, datetime, uuid
 if __name__ == "__main__":
-  # setting root of parent dir should happen in script runner & this should set path to the env var created there
   import sys
   sys.path.append(os.path.expanduser('~')+'/Desktop/task_management/')
+# if not running as a script, the parent directory should already be added to path
+  
+
 
 from mndmngr.config.config_parser import ConfigParser
 from mndmngr.gsd.task_and_todo.task.task_integration import get_task_infos_by_section

@@ -1,6 +1,11 @@
-import os, re
+import os, re, sys, dotenv
+
+if __name__ == "__main__":
+  sys.path.append(os.path.expanduser('~')+'/Desktop/task_management/')
+
 from typing import NamedTuple
 from mndmngr.config.config_parser import ConfigParser, Config
+
 
 # types
 class TaskMetadata(NamedTuple):
@@ -24,11 +29,12 @@ class TaskInfo(NamedTuple):
 
 
 
-def retrieve_tasks(parent_dir: str, task_path: str, ordered_subdirs: list[str]) -> dict[str, list[list[str]]]:
+def retrieve_tasks(config: Config) -> dict[str, list[list[str]]]:
   cwd = os.getcwd()
-  os.chdir(os.path.expanduser('~')+parent_dir+task_path)
 
-  sections: list[str] = ordered_subdirs
+  os.chdir(os.environ['PROJECT_ROOT']+config.tasks.file_structure.tasks_path)
+
+  sections: list[str] = config.tasks.file_structure.ordered_subdirs
   sections_with_tasks: dict[str, list[list[str]]] = {}
   
   for section in sections:
@@ -147,7 +153,6 @@ def get_task_infos_by_section() -> dict[str, list[TaskInfo]] | None:
   if (not config):
     return None
 
-  lib_config = config.lib
   task_mgmt_config = config.tasks
   attribute_sort_order: dict[str, list[str]] = {}
 
@@ -157,7 +162,7 @@ def get_task_infos_by_section() -> dict[str, list[TaskInfo]] | None:
     else:
       attribute_sort_order[attr] = []
 
-  raw_tasks_by_section = retrieve_tasks(lib_config.parent_dir, task_mgmt_config.file_structure.tasks_path, task_mgmt_config.file_structure.ordered_subdirs)
+  raw_tasks_by_section = retrieve_tasks(config)
 
   parsed_tasks_by_section: dict[str, list[TaskInfo]] = {}
 
@@ -172,9 +177,9 @@ def get_task_infos_by_section() -> dict[str, list[TaskInfo]] | None:
 
 
 # TODO
-def split_tasks_by_subsection():
-  """split tasks into subsections based on attributes (i.e. tags, status, etc.)"""
-  pass 
+# def split_tasks_by_subsection():
+#   """split tasks into subsections based on attributes (i.e. tags, status, etc.)"""
+#   pass 
 
 
 

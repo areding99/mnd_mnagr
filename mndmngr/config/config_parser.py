@@ -2,9 +2,6 @@ import json, os
 
 from typing import NamedTuple, Any, TypeGuard, Self
 
-class LibSection(NamedTuple):
-  parent_dir: str
-
 class DailyLogFS(NamedTuple):
   daily_log_path: str
 
@@ -33,7 +30,6 @@ class TodoSection(NamedTuple):
   file_structure: TodosFS
 
 class Config(NamedTuple):
-  lib: LibSection
   daily_log: DailyLogSection
   tasks: TasksSection
   todos: TodoSection
@@ -61,11 +57,6 @@ class ConfigParser(object):
     if (not config_json):
       raise Exception('config is empty')
     
-    lib_section_parent_dir = config_json['lib']['parent_dir']
-
-    if not isinstance(lib_section_parent_dir, str):
-      raise Exception('config does not match expected format')
-
     daily_log_fs_path = config_json['daily_log']['file_structure']['daily_log_path']
 
     if not isinstance(daily_log_fs_path, str):
@@ -112,9 +103,6 @@ class ConfigParser(object):
       raise Exception('config does not match expected format')
 
     return Config(
-      lib=LibSection(
-        parent_dir=lib_section_parent_dir
-      ),
       daily_log=DailyLogSection(
         file_structure=DailyLogFS(
           daily_log_path=daily_log_fs_path

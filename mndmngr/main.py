@@ -1,8 +1,11 @@
 #! /usr/bin/env python3
 
-# if _main_ == "_main_", this is running as a script, not a module # this may not be necessary as it should probably always be run as a script
-# if __name__ == "__main__":
-#   import sys
-#   print(sys.argv[1])
+import sys, os, dotenv
 
-print("hello")
+
+dotenv.load_dotenv()
+try: 
+  sys.path.append(os.environ['PROJECT_ROOT'])
+except:
+  sys.path.append(os.path.expanduser('~')+'/Desktop/task_management/')
+

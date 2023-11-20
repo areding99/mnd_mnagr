@@ -1,8 +1,4 @@
 {
-  "lib": {
-    "parent_dir": "/Desktop/task_management"
-  },
-
   "daily_log": {
     "file_structure": {
       "daily_log_path": "/demo_files/logs"
