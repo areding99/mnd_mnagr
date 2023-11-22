@@ -1,5 +1,5 @@
-- pay rent
-- grab milk
-- call mom
-- workout
-- vacuum
+pay rent
+grab milk
+call mom
+workout
+vacuum

@@ -12,7 +12,6 @@ def get_sorted_tasks_by_section() -> dict[str, list[Task]] | None:
   """returns a list of tasks names, organized by section & priority"""
   config: Config | None = ConfigParser().get_config()
 
-
   tasks_by_section = retrieve_parse_all_tasks()
   sorted_tasks_by_section: dict[str, list[Task]] = {}
 

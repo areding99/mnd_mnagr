@@ -6,7 +6,7 @@ if __name__ == "__main__":
 # if not running as a script, the parent directory should already be added to path
   
 from mndmngr.config.config_parser import ConfigParser
-from mndmngr.gsd.task_and_todo.task.task_integration import get_task_infos_by_section
+from mndmngr.gsd.task_and_todo.task.task_integration import get_sorted_tasks_by_section
 
 def write_header(f_name: str, date: datetime.datetime) -> None:
   with open(f_name, 'w+') as f_io:
@@ -23,18 +23,18 @@ def write_header(f_name: str, date: datetime.datetime) -> None:
     f_io.write("# "+get_weekday(date)+", "+str(date.date())+"\n\n")
   
 def write_tasks(f_name: str) -> None:
-  task_infos = get_task_infos_by_section() 
+  tasks = get_sorted_tasks_by_section() 
 
-  if (not task_infos):
+  if (not tasks):
     print("no tasks found, skipping...")
     return None
 
   with open(f_name, 'a+') as f_io:
     f_io.write("# tasks\n\n")
 
-    for section in task_infos:
+    for section in tasks:
       f_io.write("## "+section+"\n\n")
-      for task in task_infos[section]:
+      for task in tasks[section]:
         f_io.write("-[ ] ["+task.metadata.title+"](/"+task.metadata.path+") \n")
       f_io.write("\n\n")
 
