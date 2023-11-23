@@ -21,8 +21,7 @@ def get_todos_by_section() -> dict[str, list[str]] | None:
 
   os.chdir(cwd) 
 
-  return None
-
+  return todos_by_section
 
 
 

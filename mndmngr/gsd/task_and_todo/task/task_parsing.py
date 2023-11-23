@@ -4,56 +4,8 @@ if __name__ == "__main__":
   dotenv.load_dotenv()
   sys.path.append(os.environ['PROJECT_ROOT'])
 
-from typing import NamedTuple
+from mndmngr.gsd.task_and_todo.task.task import Task, TaskMetadata, TaskAbout
 from mndmngr.config.config_parser import ConfigParser, Config
-
-
-########################
-# RETRIEVAL
-########################
-
-
-def retrieve_tasks_section(section: str) -> list[list[str]]:
-  cwd = os.getcwd()
-
-  os.chdir(os.environ['TASKS_PATH'])
-  os.chdir(section)
-
-  task_files = os.listdir()
-
-  tasks: list[list[str]] = []
-
-  for t_file in task_files:
-    with open (t_file, 'r') as f_io:
-      tasks.append(f_io.readlines())
-
-  os.chdir(cwd)
-
-  return tasks
-
-########################
-# PARSING
-########################
-
-class TaskMetadata(NamedTuple):
-  title: str
-  path: str
-  created: str
-  id: str
-
-class TaskAbout(NamedTuple):
-  requestor: str
-  subscribers: list[str]
-  status: str
-  urgency: str
-  priority: str
-  tags: list[str]
-  due: str
-
-class Task(NamedTuple):
-  metadata: TaskMetadata
-  about_section: TaskAbout
-  raw_task: list[str]
 
 
 def parse_metadata_section(section: list[str]) -> TaskMetadata:
@@ -143,24 +95,3 @@ def parse_task(raw_task: list[str]) -> Task:
 
   return Task(parse_metadata_section(metadata_section), parse_about_section(about_section), raw_task=raw_task)
 
-########################
-# RETRIVAL AND PARSING
-########################
-
-def retrieve_parse_all_tasks() -> dict[str, list[Task]]:
-  config: Config | None = ConfigParser().get_config()
-
-  if (not config):
-    return {}
-
-  sections: list[str] = config.tasks.task_subdirs_ordered
-  sections_with_tasks: dict[str, list[Task]] = {}
-  
-  for section in sections:
-      for task in retrieve_tasks_section(section):
-        if section not in sections_with_tasks:
-          sections_with_tasks[section] = []
-        sections_with_tasks[section].append(parse_task(task))
-
-
-  return sections_with_tasks 

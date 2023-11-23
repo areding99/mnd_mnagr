@@ -7,6 +7,7 @@ if __name__ == "__main__":
   
 from mndmngr.config.config_parser import ConfigParser
 from mndmngr.gsd.task_and_todo.task.task_integration import get_sorted_tasks_by_section
+from mndmngr.gsd.task_and_todo.todo.todo_retrieval import get_todos_by_section
 
 def write_header(f_name: str, date: datetime.datetime) -> None:
   with open(f_name, 'w+') as f_io:
@@ -35,13 +36,31 @@ def write_tasks(f_name: str) -> None:
     for section in tasks:
       f_io.write("## "+section+"\n\n")
       for task in tasks[section]:
-        f_io.write("-[ ] ["+task.metadata.title+"](/"+task.metadata.path+") \n")
-      f_io.write("\n\n")
+        f_io.write("-[ ] ["+task.metadata.title+"](/"+task.metadata.path+")  \n")
+      f_io.write("\n")
 
   return None
 
-# def write_todos(f_name) -> None:
-#   return
+def write_todos(f_name: str) -> None:
+  todos = get_todos_by_section()
+
+  if (not todos):
+    print("no todos found, skipping...")
+    return None
+
+  with open(f_name, 'a+') as f_io:
+    f_io.write("# todos\n\n")
+
+    for section in todos:
+      f_io.write("## "+section+"\n\n")
+      f_io.write("---existing-------------\n\n")
+      for todo in todos[section]:
+        f_io.write("-[ ] "+todo+"  \n")
+      f_io.write("\n---new today-------------\n\n")
+      f_io.write("-[ ] \n")
+      f_io.write("\n") 
+
+  return None
 
 
 def get_weekday(date: datetime.datetime) -> str:
@@ -125,6 +144,7 @@ if not config:
 date = datetime.datetime.now()
 year = nav_to_year(date)
 
+# handle yesterday: update tasks, todos as required by presence of checkmarks
 
 yesterday_summary = get_yesterday_summary(year)
 
@@ -139,7 +159,7 @@ today_log_name = today+".md"
 
 write_header(today_log_name, date)
 write_tasks(today_log_name)
-# write_todos
+write_todos(today_log_name)
 # write_today_summary
 # write_yesterday_summary
 

@@ -4,3 +4,5 @@ add .env for setting some vars like folder location, python path?
 
 - check for this in the individual modules & use if exists/not running module as main
   add tests
+
+- set up context manager for directory changes
