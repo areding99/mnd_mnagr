@@ -25,10 +25,33 @@ def sort_tasks(tasks: list[Task]) -> list[Task] | None:
             # category defines no sort order over an enum of attributes, i.e. date
             attr_sort_order[category] = []
 
-    return sort_tasks_impl(tasks, category_sort_order, attr_sort_order, 0)
+    return _sort_tasks_impl(tasks, category_sort_order, attr_sort_order, 0)
 
 
-def sort_tasks_impl(
+def get_sorted_tasks_by_section(
+    tasks_by_section: dict[str, list[Task]]
+) -> dict[str, list[Task]] | None:
+    """returns a list of tasks names, organized by section & priority"""
+    sorted_tasks_by_section: dict[str, list[Task]] = {}
+
+    for section, tasks in tasks_by_section.items():
+        sorted_section = sort_tasks(tasks)
+
+        if not sorted_section:
+            continue
+
+        sorted_tasks_by_section[section] = sorted_section
+
+    return sorted_tasks_by_section
+
+
+# TODO
+# def split_tasks_by_subsection():
+#   """split tasks into subsections based on attributes (i.e. tags, status, etc.)"""
+#   pass
+
+
+def _sort_tasks_impl(
     tasks: list[Task],
     categories: list[str],
     attr_sort_order: dict[str, list[str]],
@@ -65,7 +88,7 @@ def sort_tasks_impl(
     for val in attrs:
         if val not in attr_groups:
             continue
-        for task in sort_tasks_impl(
+        for task in _sort_tasks_impl(
             attr_groups[val], categories, attr_sort_order, category_idx + 1
         ):
             sorted_tasks.append(task)

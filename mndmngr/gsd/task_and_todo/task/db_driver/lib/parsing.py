@@ -8,7 +8,7 @@ from mndmngr.gsd.task_and_todo.task.task import Task, TaskMetadata, TaskAbout
 from mndmngr.config.config_parser import ConfigParser, Config
 
 
-def parse_metadata_section(section: list[str]) -> TaskMetadata:
+def _parse_metadata_section(section: list[str]) -> TaskMetadata:
     title: str = ""
     path: str = ""
     created: str = ""
@@ -32,7 +32,7 @@ def parse_metadata_section(section: list[str]) -> TaskMetadata:
     return TaskMetadata(title, path, created, id)
 
 
-def parse_about_section(section: list[str]) -> TaskAbout:
+def _parse_about_section(section: list[str]) -> TaskAbout:
     requestor: str = ""
     subscribers: list[str] = []
     status: str = ""
@@ -93,7 +93,7 @@ def parse_task(raw_task: list[str]) -> Task:
             in_about = True
 
     return Task(
-        parse_metadata_section(metadata_section),
-        parse_about_section(about_section),
+        _parse_metadata_section(metadata_section),
+        _parse_about_section(about_section),
         raw_task,
     )
