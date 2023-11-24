@@ -1,11 +1,11 @@
-import os, re, sys, dotenv
+import os, sys, dotenv
 
 if __name__ == "__main__":
     dotenv.load_dotenv()
     sys.path.append(os.environ["PROJECT_ROOT"])
 
 from mndmngr.config.config_parser import ConfigParser, Config
-from mndmngr.gsd.task_and_todo.task.task import Task
+from mndmngr.gsd.task.task import Task
 
 
 def sort_tasks(tasks: list[Task]) -> list[Task] | None:

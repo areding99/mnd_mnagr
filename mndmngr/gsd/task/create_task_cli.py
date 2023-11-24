@@ -12,7 +12,7 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     sys.path.append(os.environ["PROJECT_ROOT"])
 
-from mndmngr.gsd.task_and_todo.task.task import Task, TaskMetadata, TaskAbout
+from mndmngr.gsd.task.task import Task, TaskMetadata, TaskAbout
 from mndmngr.config.config_parser import ConfigParser, Config
 from mndmngr.lib.typing.is_list_of_str import is_list_of_str
 

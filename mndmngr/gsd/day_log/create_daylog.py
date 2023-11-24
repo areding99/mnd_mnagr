@@ -7,12 +7,12 @@ if __name__ == "__main__":
     sys.path.append(os.environ["PROJECT_ROOT"])
 # if not running as a script, the parent directory should already be added to path
 
-import mndmngr.gsd.task_and_todo.task.db_driver.driver as task_dbdriver
-import mndmngr.gsd.task_and_todo.task.utils.sort_tasks as task_sort_util
+import mndmngr.gsd.task.db_driver.driver as task_dbdriver
+import mndmngr.gsd.task.utils.sort_tasks as task_sort_util
 
 
 from mndmngr.config.config_parser import ConfigParser
-from mndmngr.gsd.task_and_todo.todo.todo_retrieval import get_todos_by_section
+from mndmngr.gsd.todo.todo_retrieval import get_todos_by_section
 
 
 def write_header(f_name: str, date: datetime.datetime) -> None:

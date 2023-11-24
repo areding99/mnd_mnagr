@@ -6,8 +6,8 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     sys.path.append(os.environ["PROJECT_ROOT"])
 
-from mndmngr.gsd.task_and_todo.task.task import Task
-from mndmngr.gsd.task_and_todo.task.db_driver.lib.parsing import parse_task
+from mndmngr.gsd.task.task import Task
+from mndmngr.gsd.task.db_driver.lib.parsing import parse_task
 from mndmngr.config.config_parser import ConfigParser, Config
 
 
