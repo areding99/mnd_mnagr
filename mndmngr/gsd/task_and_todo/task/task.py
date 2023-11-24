@@ -28,7 +28,9 @@ class Task:
         self.raw_task = raw_task
 
     def persist(self) -> None:
-        with open(os.environ["PROJECT_ROOT"] + self.metadata.path) as f_io:
+        full_task_path = os.environ["PROJECT_ROOT"] + self.metadata.path
+
+        with open(full_task_path, "w+") as f_io:
             f_io.writelines("hello from task")
 
         return None

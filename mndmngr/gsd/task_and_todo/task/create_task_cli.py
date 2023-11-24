@@ -30,7 +30,7 @@ class TaskCLIInput(NamedTuple):
     overview: str
 
 
-def prompt_for_task_creation() -> dict[str, list[str] | str]:
+def get_task_creation_questions() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     sections = []
     status = []
     urgency = []
@@ -46,66 +46,78 @@ def prompt_for_task_creation() -> dict[str, list[str] | str]:
         priority = config.tasks.task_config.priority
         tags = config.tasks.task_config.tags
 
-    questions: list[dict[str, Any]] = [
-        {"type": "text", "message": "enter a title for the task", "name": "title"},
+    if len(sections) == 0:
+        print("no sections found for task storage - please specify in config")
+        exit(1)
+
+    metadata_questions: list[dict[str, Any]] = [
+        {
+            "type": "text",
+            "message": "enter a title for the task",
+            "name": "title",
+            "validate": lambda val: (
+                (len(re.findall(r"(\s|\/)", val)) == 0 and val != "")
+            )
+            or "enter a valid title (no whitespace or '/' characters)",
+        },
         {
             "type": "select",
             "message": "select a section for the task",
             "name": "section",
             "choices": sections,
-        }
-        if len(sections) > 0
-        else {
-            "type": "text",
-            "message": "Select a section for the task",
-            "name": "section",
         },
-        {"type": "text", "message": "who requested the task?", "name": "requestor"},
+    ]
+
+    content_questions: list[dict[str, Any]] = []
+
+    content_questions.append(
+        {"type": "text", "message": "who requested the task?", "name": "requestor"}
+    )
+    content_questions.append(
         {
             "type": "text",
             "message": "who is subscribed to this task?",
             "name": "subscribers",
-        },
-        {
-            "type": "select",
-            "message": "what is the status of this task?",
-            "name": "status",
-            "choices": status,
         }
-        if len(status) > 0
-        else {
-            "type": "text",
-            "message": "what is the status of this task?",
-            "name": "status",
-        },
-        {
-            "type": "select",
-            "message": "how urgent is this task?",
-            "name": "urgency",
-            "choices": urgency,
-        }
-        if len(urgency) > 0
-        else {"type": "text", "message": "how urgent is this task?", "name": "urgency"},
-        {
-            "type": "select",
-            "message": "what is the priority of this task?",
-            "name": "priority",
-            "choices": priority,
-        }
-        if len(priority) > 0
-        else {
-            "type": "text",
-            "message": "what is the priority of this task?",
-            "name": "priority",
-        },
-        {
-            "type": "checkbox",
-            "message": "select applicable tags",
-            "name": "tags",
-            "choices": tags,
-        }
-        if len(sections) > 0
-        else {"type": "text", "message": "tag this task", "name": "tags"},
+    )
+
+    if len(status) > 0:
+        content_questions.append(
+            {
+                "type": "select",
+                "message": "what is the status of this task?",
+                "name": "status",
+                "choices": status,
+            }
+        )
+    if len(urgency) > 0:
+        content_questions.append(
+            {
+                "type": "select",
+                "message": "how urgent is this task?",
+                "name": "urgency",
+                "choices": urgency,
+            }
+        )
+    if len(priority) > 0:
+        content_questions.append(
+            {
+                "type": "select",
+                "message": "what is the priority of this task?",
+                "name": "priority",
+                "choices": priority,
+            }
+        )
+    if len(tags) > 0:
+        content_questions.append(
+            {
+                "type": "checkbox",
+                "message": "select applicable tags",
+                "name": "tags",
+                "choices": tags,
+            }
+        )
+    content_questions.append(
         {
             "type": "text",
             "message": "due date?",
@@ -118,11 +130,44 @@ def prompt_for_task_creation() -> dict[str, list[str] | str]:
                 or val == ""
             )
             or "date must be in the format YYYY-MM-DD",
-        },
-        {"type": "text", "message": "what's this task about?", "name": "overview"},
-    ]
+        }
+    )
+    content_questions.append(
+        {"type": "text", "message": "what's this task about?", "name": "overview"}
+    )
 
-    return questionary.prompt(questions)
+    return (metadata_questions, content_questions)
+
+
+def prompt_for_task_creation_input() -> dict[str, list[str] | str]:
+    metadata_questions, content_questions = get_task_creation_questions()
+
+    valid_input: bool = False
+
+    while not valid_input:
+        raw_input = questionary.prompt(metadata_questions)
+
+        title: str = ""
+        if isinstance(raw_input["title"], str):
+            title = raw_input["title"]
+
+        section: str = ""
+        if isinstance(raw_input["section"], str):
+            section = raw_input["section"]
+
+        if title == "" or section == "":
+            print("title and section are required")
+            continue
+
+        if os.path.exists(os.environ["TASKS_PATH"] + "/" + section + "/" + title):
+            print("task already exists in " + section + " dir; try a new name")
+            continue
+
+        valid_input = True
+
+    raw_input.update(questionary.prompt(content_questions))
+
+    return raw_input
 
 
 def parse_task_creation_input(raw_input: dict[str, list[str] | str]) -> TaskCLIInput:
@@ -181,12 +226,17 @@ def parse_task_creation_input(raw_input: dict[str, list[str] | str]) -> TaskCLII
 
 
 def create_task_from_cli() -> Task:
-    raw_input = prompt_for_task_creation()
+    raw_input = prompt_for_task_creation_input()
     parsed_input = parse_task_creation_input(raw_input)
 
     metadata = TaskMetadata(
         parsed_input.title,
-        os.environ["TASKS_REL_PATH"] + parsed_input.section,
+        os.environ["TASKS_REL_PATH"]
+        + "/"
+        + parsed_input.section
+        + "/"
+        + parsed_input.title
+        + ".md",
         datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         str(uuid.uuid4()),
     )
