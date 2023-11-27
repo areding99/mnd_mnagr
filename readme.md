@@ -1,14 +1,17 @@
 # overview
 
-A library of scripts & templates for streamlining pkm & task management.
+The goal of this project is a _pluggable_ package of utilities that operate on a system of human-readable text files (system-of-files from here forward) that can be managed in a simple text editor. As such, the first commitment of the project is to the integrity of the system-of-files & prevention of any co-dependency between the utility & system-of-files. The benefits are intrinsic to this purpose: fidelity with a system-of-files that can be agnostic of the utility.
 
-# note:
+The nature of this project's mission often creates an interesting duality in which files often become both the source & target for some given operation. This, along with a likely requirement for configuration what's achievable via the json config file, means users will have to be more attune to the utility than an alternative. To change a system of notes to fit this utility is to contradict its purpose: anyone looking for a structure to impose on their system of notes should find an opinionated utility with dedicated support (there are many existing & superior solutions for that problem).
 
-This project is a means for my learning python - seems I'm at the point where each day I learn something new & spend a good deal of time revising what I did the day before. This is not currently recommended for use/reference.
+This tool is for anyone who wants to keep their notes as simple as possible: the trade off is more complexity written into utilities for streamlining some interactions with that system.
+
+**Disclaimer** These are the lofty goals of the project. For now, much that will be configurable is hard code to meet my specific needs. If interested, please fork & change as necessary for your system.
+**Also** this project is a means for my learning python - seems I'm at the point where each day I learn something new & spend a good deal of time revising what I did the day before. This is not currently recommended for use/reference.
 
 # installation
 
-<!-- this should go in the install script -->
+<!-- TODO this should go in the install script -->
 
 1. download the repo & run `pip install -r requirements.txt`
 1. run the utility of your choice using `python3 ./main.py -flag`

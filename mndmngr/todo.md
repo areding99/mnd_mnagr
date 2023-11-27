@@ -1,8 +1,13 @@
 add shell script for installation
+
+- should check for python3, pip3, etc.
+- also set the PYTHONPATH here
+
 add makefile?
-add .env for setting some vars like folder location, python path?
+add .env_example
 
-- check for this in the individual modules & use if exists/not running module as main
-  add tests
-
+- remove checks against main (probably put them in tests) - this should happen in script
+- add tests
 - set up context manager for directory changes
+
+- devrequirements.txt?

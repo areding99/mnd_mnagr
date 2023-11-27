@@ -1,6 +1,5 @@
 from typing import NamedTuple
 from mndmngr.gsd.task.task import Task
-from mndmngr.gsd.todo.todo import Todo
 
 
 class DLHeader(NamedTuple):
@@ -14,12 +13,13 @@ class DLTasksSection(NamedTuple):
     tasks: list[tuple[Task, bool]]
 
 
+# todos live as a part of the daylog - they don't exist outside this context
 class DLTodosSection(NamedTuple):
-    existing: list[tuple[Todo, bool]]
-    new_today: list[tuple[Todo, bool]]
+    existing: list[tuple[str, bool]]
+    new_today: list[tuple[str, bool]]
 
 
-class DLASummarySection(NamedTuple):
+class DLSummarySection(NamedTuple):
     notes: str
     today_summary: str
     yesterday_summary: str
@@ -31,7 +31,7 @@ class DayLog:
         header: DLHeader,
         tasks: DLTasksSection,
         todos: DLTodosSection,
-        summary: DLASummarySection,
+        summary: DLSummarySection,
     ) -> None:
         self.header = header
         self.tasks = tasks

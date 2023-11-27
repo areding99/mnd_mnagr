@@ -9,23 +9,11 @@ if __name__ == "__main__":
 
 
 def get_todos_by_section() -> dict[str, list[str]] | None:
-    cwd = os.getcwd()
+    # TODO implement
+    # retrieve from yesterday
+    # just copy whatever headers existed yesterday rather than impose some config
 
-    os.chdir(os.environ["TODOS_PATH"])
-    todos_by_section: dict[str, list[str]] = {}
-
-    for file in os.listdir():
-        with open(file, "r") as f_io:
-            todos_by_section[file] = []
-            # iterate over lines in the file
-            for line in f_io.readlines():
-                todos_by_section[file].append(line.strip())
-
-    os.chdir(cwd)
-
-    return todos_by_section
+    return {"work": ["sample 1", "sample 2"], "personal": ["sample3", "sample4"]}
 
 
-# use a todo section that will be generated from existing & is visibly separate - new todos should have their own section so that
 # at the end of the day, finished todos can be closed & opened todos can be added
-# if you want to update a todo, you should check it as finished in the generated section & add a new todo in the manual section

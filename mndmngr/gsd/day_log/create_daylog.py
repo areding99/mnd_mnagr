@@ -76,11 +76,8 @@ def write_todos(f_name: str) -> None:
 
         for section in todos:
             f_io.write("## " + section + "\n\n")
-            f_io.write("---existing-------------\n\n")
             for todo in todos[section]:
                 f_io.write("-[ ] " + todo + "  \n")
-            f_io.write("\n---new today-------------\n\n")
-            f_io.write("-[ ] \n")
             f_io.write("\n")
 
     return None

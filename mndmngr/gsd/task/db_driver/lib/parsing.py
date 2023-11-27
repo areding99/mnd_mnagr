@@ -5,7 +5,6 @@ if __name__ == "__main__":
     sys.path.append(os.environ["PROJECT_ROOT"])
 
 from mndmngr.gsd.task.task import Task, TaskMetadata, TaskAbout
-from mndmngr.config.config_parser import ConfigParser, Config
 
 
 def _parse_metadata_section(section: list[str]) -> TaskMetadata:
@@ -74,20 +73,27 @@ def parse_task(raw_task: list[str]) -> Task:
     in_about: bool = False
 
     for line in raw_task:
+        # metadata section -----------------
         if line.startswith("---"):
             in_metadata = False
 
         if in_metadata:
             metadata_section.append(line)
+            # sanity check: one section at a time
+            continue
 
         if line.startswith("---") and len(metadata_section) == 0:
             in_metadata = True
+            # sanity check: one section at a time
+            continue
 
+        # about section -----------------
         if line == "\n" and in_about:
             break
 
         if in_about:
             about_section.append(line)
+            continue
 
         if re.match(r"(\|\s*-+\s*){2}\|", line) and len(about_section) == 0:
             in_about = True

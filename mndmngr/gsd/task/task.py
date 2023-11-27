@@ -34,3 +34,20 @@ class Task:
             f_io.writelines("hello from task")
 
         return None
+
+
+# for now, even though tasks have a uuid, use path as unique identifier for readablility in files
+class TaskRef:
+    def __init__(self, path: str) -> None:
+        self.path = path
+
+    def __repr__(self) -> str:
+        return "(TaskRef)" + self.path
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, TaskRef):
+            return NotImplemented
+        return self.path == other.path
+
+    def __hash__(self) -> int:
+        return hash(self.path)
