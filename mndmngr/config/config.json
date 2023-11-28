@@ -1,4 +1,8 @@
 {
+  "daylog": {
+    "section_delimiter": "#",
+    "subsection_delimiter": "##"
+  },
   "tasks": {
     "task_subdirs_ordered": ["work", "personal"],
     "task_config": {

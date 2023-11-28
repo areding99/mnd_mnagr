@@ -1,5 +1,6 @@
-import os
-from typing import NamedTuple
+from typing import NamedTuple, Self
+
+import mndmngr.gsd.task.db_driver.driver as task_dbdriver
 
 
 class TaskMetadata(NamedTuple):
@@ -19,35 +20,42 @@ class TaskAbout(NamedTuple):
     due: str
 
 
+class TaskArgs(NamedTuple):
+    metadata: TaskMetadata
+    about: TaskAbout
+    body: list[str]
+
+
 class Task:
-    def __init__(
-        self, metadata: TaskMetadata, about_section: TaskAbout, raw_task: list[str]
-    ) -> None:
-        self.metadata = metadata
-        self.about_section = about_section
-        self.raw_task = raw_task
-
-    def persist(self) -> None:
-        full_task_path = os.environ["PROJECT_ROOT"] + self.metadata.path
-
-        with open(full_task_path, "w+") as f_io:
-            f_io.writelines("hello from task")
-
-        return None
-
-
-# for now, even though tasks have a uuid, use path as unique identifier for readablility in files
-class TaskRef:
-    def __init__(self, path: str) -> None:
+    # Task uses path as a unique identifier for it's availablity in md files
+    def __init__(self, path: str, /, task_args: TaskArgs | None = None) -> None:
         self.path = path
+        self.task_args = task_args
+
+    def is_initialized(self) -> bool:
+        return self.task_args is not None
 
     def __repr__(self) -> str:
-        return "(TaskRef)" + self.path
+        if self.is_initialized():
+            return f"(Task)({self.path})"
+        else:
+            return f"(TaskRef)({self.path})"
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, TaskRef):
-            return NotImplemented
-        return self.path == other.path
+    def load_safe(self) -> Self | None:
+        if self.is_initialized():
+            print(
+                "task already initialized - loading from db will overwrite local state"
+            )
+            return None
 
-    def __hash__(self) -> int:
-        return hash(self.path)
+        return self
+
+    def _load_unsafe(self) -> Self:
+        task_args = task_dbdriver.read().query_task_by_path(self.path)
+
+        return Task(self.path, task_args)
+
+    def persist(self) -> None:
+        task_dbdriver.create().create_task(self)
+
+        return None

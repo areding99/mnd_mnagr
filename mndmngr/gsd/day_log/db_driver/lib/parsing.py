@@ -1,4 +1,8 @@
 import os, re, sys, dotenv
+from mndmngr.config.config_parser import ConfigParser
+
+from mndmngr.gsd.task.task import Task
+from mndmngr.lib.parsing.utils import get_first_md_link_path, is_incomplete_md_todo_item
 
 if __name__ == "__main__":
     dotenv.load_dotenv()
@@ -39,8 +43,38 @@ def _parse_header(section: list[str]) -> DLHeader:
     return DLHeader(title, path, created, id)
 
 
-def _parse_tasks_section(section: list[str]) -> DLTasksSection | None:
-    return None
+# get the tasks as they appear in the daylog, not as they would be generated for the daylog
+def _parse_tasks_section(tasks_section: list[str]) -> DLTasksSection | None:
+    sections_w_tasks: dict[str, list[tuple[Task, bool]]]
+
+    config = ConfigParser().get_config()
+
+    if not config:
+        print("could not find config")
+        return None
+
+    subsection_delim = config.daylog.subsection_delimiter
+
+    section_name = ""
+
+    for line in tasks_section:
+        if line.startswith(subsection_delim):
+            section_name = line[len(subsection_delim) :].strip()
+            continue
+
+        if line.startswith("-"):
+            path = get_first_md_link_path(line)
+
+            if not path:
+                print("task path not found")
+                return None
+
+            task_ref = Task(path)
+            sections_w_tasks[section_name].append(
+                (task_ref, is_incomplete_md_todo_item(line))
+            )
+
+    return DLTasksSection(sections_w_tasks)
 
 
 def _parse_todos_section(section: list[str]) -> DLTodosSection | None:
@@ -78,6 +112,7 @@ def parse_day_log(raw_dl: list[str]) -> DayLog | None:
             continue
 
         # body (tasks -> todos -> summary) -----------------
+        # TODO update to use config delimiters
         if line.startswith("# tasks"):
             in_tasks_section = True
             continue
@@ -103,26 +138,24 @@ def parse_day_log(raw_dl: list[str]) -> DayLog | None:
         if in_summary_section:
             raw_summary_section.append(line)
 
-    print("HEADER: \n")
-    print(raw_header)
-    print("\n\nTASKS: \n")
-    print(raw_tasks_section)
-    print("\n\nTODOS: \n")
-    print(raw_todos_section)
-    print("\n\nSUMMARY: \n")
-    print(raw_summary_section)
+    # print("HEADER: \n")
+    # print(raw_header)
+    # print("\n\nTASKS: \n")
+    # print(raw_tasks_section)
+    # print("\n\nTODOS: \n")
+    # print(raw_todos_section)
+    # print("\n\nSUMMARY: \n")
+    # print(raw_summary_section)
 
     clean_header = _parse_header(raw_header)
+
+    print(clean_header)
+
     clean_tasks_section = _parse_tasks_section(raw_tasks_section)
     clean_todos_section = _parse_todos_section(raw_todos_section)
     clean_summary_section = _parse_summary_section(raw_summary_section)
 
-    if (
-        not clean_header
-        or not clean_tasks_section
-        or not clean_todos_section
-        or not clean_summary_section
-    ):
+    if not clean_tasks_section or not clean_todos_section or not clean_summary_section:
         return None
 
     return DayLog(

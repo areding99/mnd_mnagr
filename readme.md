@@ -6,8 +6,11 @@ The nature of this project's mission often creates an interesting duality in whi
 
 This tool is for anyone who wants to keep their notes as simple as possible: the trade off is more complexity written into utilities for streamlining some interactions with that system.
 
-**Disclaimer** These are the lofty goals of the project. For now, much that will be configurable is hard code to meet my specific needs. If interested, please fork & change as necessary for your system.
+Methodology is fail-fast if there's a mismatch between expectation & system-of-files format.
+
+**Disclaimer** These are the lofty goals of the project. For now, much that will be configurable is hard code to meet my specific needs. If interested, please fork & change as necessary for your system.  
 **Also** this project is a means for my learning python - seems I'm at the point where each day I learn something new & spend a good deal of time revising what I did the day before. This is not currently recommended for use/reference.
+**Also** text files are understood by default to be markdown files & use basic markdown syntax
 
 # installation
 

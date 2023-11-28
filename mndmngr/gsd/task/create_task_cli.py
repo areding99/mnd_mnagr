@@ -12,7 +12,8 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     sys.path.append(os.environ["PROJECT_ROOT"])
 
-from mndmngr.gsd.task.task import Task, TaskMetadata, TaskAbout
+from mndmngr.gsd.task.db_driver.read import task_exists_at
+from mndmngr.gsd.task.task import Task, TaskArgs, TaskMetadata, TaskAbout
 from mndmngr.config.config_parser import ConfigParser, Config
 from mndmngr.lib.typing.is_list_of_str import is_list_of_str
 
@@ -159,7 +160,7 @@ def prompt_for_task_creation_input() -> dict[str, list[str] | str]:
             print("title and section are required")
             continue
 
-        if os.path.exists(os.environ["TASKS_PATH"] + "/" + section + "/" + title):
+        if task_exists_at(section + "/" + title):
             print("task already exists in " + section + " dir; try a new name")
             continue
 
@@ -251,7 +252,10 @@ def create_task_from_cli() -> Task:
         parsed_input.due,
     )
 
-    return Task(metadata, about_section, [parsed_input.overview])
+    return Task(
+        metadata.path,
+        task_args=TaskArgs(metadata, about_section, [parsed_input.overview]),
+    )
 
 
 def create_task_from_cli_and_persist() -> Task:

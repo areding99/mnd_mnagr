@@ -1,5 +1,5 @@
 from typing import NamedTuple
-from mndmngr.gsd.task.task import Task
+from mndmngr.gsd.task.task import TaskRef
 
 
 class DLHeader(NamedTuple):
@@ -10,10 +10,9 @@ class DLHeader(NamedTuple):
 
 
 class DLTasksSection(NamedTuple):
-    tasks: list[tuple[Task, bool]]
+    tasks: dict[str, list[tuple[TaskRef, bool]]]
 
 
-# todos live as a part of the daylog - they don't exist outside this context
 class DLTodosSection(NamedTuple):
     existing: list[tuple[str, bool]]
     new_today: list[tuple[str, bool]]

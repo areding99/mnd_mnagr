@@ -11,7 +11,6 @@ import mndmngr.gsd.task.db_driver.driver as task_dbdriver
 import mndmngr.gsd.task.utils.sort_tasks as task_sort_util
 
 
-from mndmngr.config.config_parser import ConfigParser
 from mndmngr.gsd.todo.todo_retrieval import get_todos_by_section
 
 
@@ -151,14 +150,6 @@ def get_yesterday_summary(year: int) -> str | None:
 
 
 # START OF SCRIPT
-
-cp = ConfigParser()
-config = cp.get_config()
-
-if not config:
-    print("config is empty")
-    exit(1)
-
 date = datetime.datetime.now()
 year = nav_to_year(date)
 

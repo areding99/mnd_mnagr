@@ -4,7 +4,7 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     sys.path.append(os.environ["PROJECT_ROOT"])
 
-from mndmngr.gsd.task.task import Task, TaskMetadata, TaskAbout
+from mndmngr.gsd.task.task import Task, TaskArgs, TaskMetadata, TaskAbout
 
 
 def _parse_metadata_section(section: list[str]) -> TaskMetadata:
@@ -98,8 +98,13 @@ def parse_task(raw_task: list[str]) -> Task:
         if re.match(r"(\|\s*-+\s*){2}\|", line) and len(about_section) == 0:
             in_about = True
 
+    metadata = _parse_metadata_section(metadata_section)
+
     return Task(
-        _parse_metadata_section(metadata_section),
-        _parse_about_section(about_section),
-        raw_task,
+        metadata.path,
+        TaskArgs(
+            metadata,
+            _parse_about_section(about_section),
+            raw_task,
+        ),
     )

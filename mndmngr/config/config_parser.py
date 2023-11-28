@@ -1,6 +1,11 @@
-import json, os
+import json
 from typing import NamedTuple, Any, Self
 from mndmngr.lib.typing.is_list_of_str import is_list_of_str
+
+
+class DaylogConfig(NamedTuple):
+    section_delimiter: str
+    subsection_delimiter: str
 
 
 class TaskConfig(NamedTuple):
@@ -17,6 +22,7 @@ class TasksSection(NamedTuple):
 
 
 class Config(NamedTuple):
+    daylog: DaylogConfig
     tasks: TasksSection
 
 
@@ -43,37 +49,45 @@ class ConfigParser(object):
         if not config_json:
             raise Exception("config is empty")
 
-        task_subdirs_ordered = config_json["tasks"]["task_subdirs_ordered"]
+        daylog_section_delimiter = config_json["daylog"]["daylog_section_delimiter"]
+        if not isinstance(daylog_section_delimiter, str):
+            raise Exception("config does not match expected format")
 
+        daylog_subsection_delimiter = config_json["daylog"][
+            "daylog_subsection_delimiter"
+        ]
+        if not isinstance(daylog_subsection_delimiter, str):
+            raise Exception("config does not match expected format")
+
+        task_subdirs_ordered = config_json["tasks"]["task_subdirs_ordered"]
         if not is_list_of_str(task_subdirs_ordered):
             raise Exception("config does not match expected format")
 
         tasks_config_status_enum = config_json["tasks"]["task_config"]["status"]
-
         if not is_list_of_str(tasks_config_status_enum):
             raise Exception("config does not match expected format")
 
         tasks_config_urgency_enum = config_json["tasks"]["task_config"]["urgency"]
-
         if not is_list_of_str(tasks_config_urgency_enum):
             raise Exception("config does not match expected format")
 
         tasks_config_priority_enum = config_json["tasks"]["task_config"]["priority"]
-
         if not is_list_of_str(tasks_config_priority_enum):
             raise Exception("config does not match expected format")
 
         tasks_config_tags_enum = config_json["tasks"]["task_config"]["tags"]
-
         if not is_list_of_str(tasks_config_tags_enum):
             raise Exception("config does not match expected format")
 
         sort_order = config_json["tasks"]["task_sort_order"]
-
         if not is_list_of_str(sort_order):
             raise Exception("config does not match expected format")
 
         return Config(
+            daylog=DaylogConfig(
+                section_delimiter=daylog_section_delimiter,
+                subsection_delimiter=daylog_subsection_delimiter,
+            ),
             tasks=TasksSection(
                 task_subdirs_ordered=task_subdirs_ordered,
                 task_config=TaskConfig(

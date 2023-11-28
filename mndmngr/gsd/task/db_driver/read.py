@@ -35,6 +35,26 @@ def _query_raw_task_by_id(id: str) -> list[str] | None:
     return None
 
 
+def _query_raw_task_by_path(rel_path: str) -> list[str] | None:
+    full_path = os.environ["TASKS_PATH"] + "/" + rel_path
+
+    if not os.path.exists(full_path):
+        print("could not find task at: " + full_path)
+        return None
+
+    with open(full_path, "r") as f_io:
+        return f_io.readlines()
+
+
+def query_task_by_path(rel_path: str) -> Task | None:
+    raw_task = _query_raw_task_by_path(rel_path)
+
+    if not raw_task:
+        return None
+
+    return parse_task(raw_task)
+
+
 def _query_raw_tasks_in_section(section: str) -> list[list[str]]:
     cwd = os.getcwd()
 
@@ -68,3 +88,9 @@ def query_all_tasks_by_section() -> dict[str, list[Task]]:
             sections_with_tasks[section].append(parse_task(task))
 
     return sections_with_tasks
+
+
+def task_exists_at(rel_path: str) -> bool:
+    if os.path.exists(os.environ["TASKS_PATH"] + "/" + rel_path):
+        return True
+    return False
