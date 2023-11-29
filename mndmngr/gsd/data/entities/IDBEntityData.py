@@ -1,0 +1,2 @@
+class IDBEntityData:
+    pass

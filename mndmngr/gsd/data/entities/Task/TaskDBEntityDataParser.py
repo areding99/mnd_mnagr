@@ -1,11 +1,33 @@
-import os, re, sys, dotenv
+from mndmngr.gsd.data.entities.IDBEntityDataParser import IDBEntityDataParser
+from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
-if __name__ == "__main__":
-    dotenv.load_dotenv()
-    sys.path.append(os.environ["PROJECT_ROOT"])
 
-from mndmngr.gsd.task.task import Task, TaskArgs, TaskMetadata, TaskAbout
+class TaskDBEntityDataParser(IDBEntityDataParser):
+    def parse(self, data: list[str]) -> TaskEntityData:
 
+### from before:
+
+class TaskMetadata(NamedTuple):
+    title: str
+    path: str
+    created: str
+    id: str
+
+
+class TaskAbout(NamedTuple):
+    requestor: str
+    subscribers: list[str]
+    status: str
+    urgency: str
+    priority: str
+    tags: list[str]
+    due: str
+
+
+class TaskArgs(NamedTuple):
+    metadata: TaskMetadata
+    about: TaskAbout
+    body: list[str]
 
 def _parse_metadata_section(section: list[str]) -> TaskMetadata:
     title: str = ""
