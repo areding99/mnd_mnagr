@@ -1,39 +1,54 @@
+import re
 from mndmngr.gsd.data.entities.IDBEntityDataParser import IDBEntityDataParser
 from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 
 class TaskDBEntityDataParser(IDBEntityDataParser):
     def parse(self, data: list[str]) -> TaskEntityData:
+        metadata_section: list[str] = []
+        in_metadata: bool = False
+        about_section: list[str] = []
+        in_about: bool = False
 
-### from before:
+        for line in data:
+            # metadata section -----------------
+            if line.startswith("---"):
+                in_metadata = False
 
-class TaskMetadata(NamedTuple):
-    title: str
-    path: str
-    created: str
-    id: str
+            if in_metadata:
+                metadata_section.append(line)
+                # sanity check: one section at a time
+                continue
+
+            if line.startswith("---") and len(metadata_section) == 0:
+                in_metadata = True
+                # sanity check: one section at a time
+                continue
+
+            # about section -----------------
+            if line == "\n" and in_about:
+                break
+
+            if in_about:
+                about_section.append(line)
+                continue
+
+            if re.match(r"(\|\s*-+\s*){2}\|", line) and len(about_section) == 0:
+                in_about = True
+
+        metadata = _parse_metadata_section(metadata_section)
+        about = _parse_about_section(about_section)
+
+        return _collate_parsed_sections(metadata, about, data)
 
 
-class TaskAbout(NamedTuple):
-    requestor: str
-    subscribers: list[str]
-    status: str
-    urgency: str
-    priority: str
-    tags: list[str]
-    due: str
+def _parse_metadata_section(section: list[str]) -> dict[str, str]:
+    parsed = {}
 
-
-class TaskArgs(NamedTuple):
-    metadata: TaskMetadata
-    about: TaskAbout
-    body: list[str]
-
-def _parse_metadata_section(section: list[str]) -> TaskMetadata:
-    title: str = ""
-    path: str = ""
-    created: str = ""
-    id: str = ""
+    parsed["title"] = ""
+    parsed["path"] = ""
+    parsed["created"] = ""
+    parsed["id"] = ""
 
     for line in section:
         l = re.split(r":", line, 1)
@@ -42,25 +57,27 @@ def _parse_metadata_section(section: list[str]) -> TaskMetadata:
 
         match key:
             case "title":
-                title = val
+                parsed["title"] = val
             case "path":
-                path = val
+                parsed["path"] = val
             case "created":
-                created = val
+                parsed["created"] = val
             case "id":
-                id = val
+                parsed["id"] = val
 
-    return TaskMetadata(title, path, created, id)
+    return parsed
 
 
-def _parse_about_section(section: list[str]) -> TaskAbout:
-    requestor: str = ""
-    subscribers: list[str] = []
-    status: str = ""
-    urgency: str = ""
-    priority: str = ""
-    tags: list[str] = []
-    due: str = ""
+def _parse_about_section(section: list[str]) -> dict[str, str | list[str]]:
+    parsed: dict[str, str | list[str]] = {}
+
+    parsed["requestor"] = ""
+    parsed["subscribers"] = []
+    parsed["status"] = ""
+    parsed["urgency"] = ""
+    parsed["priority"] = ""
+    parsed["tags"] = []
+    parsed["due"] = ""
 
     for line in section:
         l = re.split(r"\|", line)
@@ -69,64 +86,43 @@ def _parse_about_section(section: list[str]) -> TaskAbout:
 
         match key:
             case "requestor":
-                requestor = val
+                parsed["requestor"] = val
             case "subscribers":
+                sub_list = []
                 for v in val.split(","):
-                    subscribers.append(v.strip())
+                    sub_list.append(v.strip())
+                parsed["subscribers"] = sub_list
             case "status":
-                status = val
+                parsed["status"] = val
             case "urgency":
-                urgency = val
+                parsed["urgency"] = val
             case "priority":
-                priority = val
+                parsed["priority"] = val
             case "tags":
+                tag_list = []
                 for v in val.split(","):
-                    tags.append(v.strip())
+                    tag_list.append(v.strip())
+                parsed["tags"] = tag_list
             case "due":
-                due = val
+                parsed["due"] = val
 
-    return TaskAbout(requestor, subscribers, status, urgency, priority, tags, due)
+    return parsed
 
 
-def parse_task(raw_task: list[str]) -> Task:
-    metadata_section: list[str] = []
-    in_metadata: bool = False
-    about_section: list[str] = []
-    in_about: bool = False
-
-    for line in raw_task:
-        # metadata section -----------------
-        if line.startswith("---"):
-            in_metadata = False
-
-        if in_metadata:
-            metadata_section.append(line)
-            # sanity check: one section at a time
-            continue
-
-        if line.startswith("---") and len(metadata_section) == 0:
-            in_metadata = True
-            # sanity check: one section at a time
-            continue
-
-        # about section -----------------
-        if line == "\n" and in_about:
-            break
-
-        if in_about:
-            about_section.append(line)
-            continue
-
-        if re.match(r"(\|\s*-+\s*){2}\|", line) and len(about_section) == 0:
-            in_about = True
-
-    metadata = _parse_metadata_section(metadata_section)
-
-    return Task(
-        metadata.path,
-        TaskArgs(
-            metadata,
-            _parse_about_section(about_section),
-            raw_task,
-        ),
+def _collate_parsed_sections(
+    metadata: dict[str, str], about: dict[str, str | list[str]], raw: list[str]
+) -> TaskEntityData:
+    return TaskEntityData(
+        title=metadata["title"],
+        path=metadata["path"],
+        created=metadata["created"],
+        id=metadata["id"],
+        requestor=type(about["requestor"]) is str and about["requestor"] or "",
+        subscribers=type(about["subscribers"]) is list and about["subscribers"] or [],
+        status=type(about["status"]) is str and about["status"] or "",
+        urgency=type(about["urgency"]) is str and about["urgency"] or "",
+        tags=type(about["tags"]) is list and about["tags"] or [],
+        priority=type(about["priority"]) is str and about["priority"] or "",
+        due=type(about["due"]) is str and about["due"] or "",
+        body=raw,
     )

@@ -1,71 +1,41 @@
-from abc import ABC, abstractmethod
 from typing import Type
 
-
-class IDBEntityData:
-    pass
-
-
-class TaskEntityData(IDBEntityData):
-    def __init__(self, name: str, description: str):
-        self.name = name
-        self.description = description
-
-
-class IDBEntity(ABC):
-    _path: str
-    _data: IDBEntityData
-
-    @abstractmethod
-    def __init__(self, path: str, data: IDBEntityData):
-        pass
-
-    def get_data(self) -> IDBEntityData:
-        return self._data
-
-    def get_path(self) -> str:
-        return self._path
-
-
-class TaskDBEntity(IDBEntity):
-    def __init__(self, path: str, data: TaskEntityData):
-        self._path = path
-        self._data = data
-
-
-class IDBQuery(ABC):
-    @abstractmethod
-    def run(self, arg: str) -> dict[str, list[str]]:
-        pass
-
-
-class PathDBQuery(IDBQuery):
-    def run(self, arg: str) -> dict[str, list[str]]:
-        return {"path": ["nameSample", "descriptionSample"]}
-
-
-class IDBEntityDataParser(ABC):
-    @abstractmethod
-    def parse(self, data: list[str]) -> IDBEntityData:
-        pass
-
-
-class TaskDBEntityDataParser(IDBEntityDataParser):
-    def parse(self, data: list[str]) -> IDBEntityData:
-        return TaskEntityData(data[0], data[1])
+from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
+from mndmngr.gsd.data.entities.IDBEntityData import IDBEntityData
+from mndmngr.gsd.data.entities.IDBEntityDataParser import IDBEntityDataParser
+from mndmngr.gsd.data.queries.IDBMultiQuery import IDBMultiQuery
+from mndmngr.gsd.data.queries.IDBQuery import IDBQuery
 
 
 def get(
-    Entity: Type[IDBEntity], query: IDBQuery, parser: IDBEntityDataParser
-) -> IDBEntity:
-    data = query.run("arg")
-    path = ""
-    for key in data:
-        path = key
+    Entity: Type[IDBEntity],
+    parser: IDBEntityDataParser,
+    query: IDBQuery,
+    *query_args: str,
+) -> IDBEntity | None:
+    res = query.run(*query_args)
 
-    parsed: IDBEntityData = parser.parse(data[path])
+    if res is None:
+        return None
+
+    [path, data] = res
+    parsed: IDBEntityData = parser.parse(data)
 
     return Entity(path, parsed)
+
+
+def get_many(
+    Entity: Type[IDBEntity],
+    parser: IDBEntityDataParser,
+    query: IDBMultiQuery,
+    *query_args: str,
+) -> list[IDBEntity] | None:
+    result = query.run(*query_args)
+
+    if result is None:
+        return None
+
+    return [Entity(path, parser.parse(data)) for [path, data] in result.items()]
 
 
 def write(data: IDBEntityData) -> None:
@@ -82,6 +52,3 @@ def delete(data: IDBEntityData) -> None:
 
 def delete_at_path(path: str) -> None:
     pass
-
-
-print(get(TaskDBEntity, PathDBQuery(), TaskDBEntityDataParser()))

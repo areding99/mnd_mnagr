@@ -6,30 +6,61 @@
 #     DayLog,
 # )
 
+import re
+from mndmngr.gsd.data.entities.Daylog.DaylogEntityData import DaylogEntityData
+from mndmngr.gsd.data.entities.IDBEntityDataParser import IDBEntityDataParser
+from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
 
-# # IMPLEMENT the following as next step (can test in read.py)
-# def _parse_header(section: list[str]) -> DLHeader:
-#     title: str = ""
-#     path: str = ""
-#     created: str = ""
-#     id: str = ""
 
-#     for line in section:
-#         l = re.split(r":", line, 1)
-#         key = l[0].strip()
-#         val = l[1].strip()
+class DaylogDBEntityTaskFirstDataParser(IDBEntityDataParser):
+    def parse(self, data: list[str]) -> DaylogEntityData:
+        pass
 
-#         match key:
-#             case "title":
-#                 title = val
-#             case "path":
-#                 path = val
-#             case "created":
-#                 created = val
-#             case "id":
-#                 id = val
+    def _parse_header(self, section: list[str]) -> dict[str, str]:
+        parsed = {}
 
-#     return DLHeader(title, path, created, id)
+        parsed["title"] = ""
+        parsed["path"] = ""
+        parsed["created"] = ""
+        parsed["id"] = ""
+
+        for line in section:
+            l = re.split(r":", line, 1)
+            key = l[0].strip()
+            val = l[1].strip()
+
+            match key:
+                case "title":
+                    parsed["title"] = val
+                case "path":
+                    parsed["path"] = val
+                case "created":
+                    parsed["created"] = val
+                case "id":
+                    parsed["id"] = val
+
+        return parsed
+
+    def _collate_parsed_sections(
+        self,
+        metadata: dict[str, str],
+        tasks: dict[str, list[tuple[TaskDBEntity, bool]]],
+        todos: list[tuple[str, bool]],
+        summary: dict[str, str],
+        raw: list[str],
+    ) -> DaylogEntityData:
+        return DaylogEntityData(
+            title=metadata["title"],
+            path=metadata["path"],
+            created=metadata["created"],
+            id=metadata["id"],
+            tasks=tasks,
+            todos=todos,
+            notes=summary["notes"],
+            today_summary=summary["today_summary"],
+            yesterday_summary=summary["yesterday_summary"],
+            raw=raw,
+        )
 
 
 # # get the tasks as they appear in the daylog, not as they would be generated for the daylog

@@ -14,6 +14,7 @@ class DaylogEntityData(IDBEntityData):
         notes: str,
         today_summary: str,
         yesterday_summary: str,
+        raw: list[str],
     ) -> None:
         self.title = title
         self.path = path
@@ -24,3 +25,4 @@ class DaylogEntityData(IDBEntityData):
         self.notes = notes
         self.today_summary = today_summary
         self.yesterday_summary = yesterday_summary
+        self.raw = raw
