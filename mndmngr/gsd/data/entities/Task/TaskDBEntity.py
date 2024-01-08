@@ -9,7 +9,7 @@ from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 
 class TaskDBEntity(IDBEntity):
-    def __init__(self, path: str, data: TaskEntityData | None):
+    def __init__(self, path: str, data: TaskEntityData | None = None):
         self._path = path
         self._data = data
 

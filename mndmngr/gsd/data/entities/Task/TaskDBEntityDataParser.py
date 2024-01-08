@@ -5,9 +5,10 @@ from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 class TaskDBEntityDataParser(IDBEntityDataParser):
     def parse(self, data: list[str]) -> TaskEntityData:
-        metadata_section: list[str] = []
+        raw_metadata: list[str] = []
+        raw_about: list[str] = []
+
         in_metadata: bool = False
-        about_section: list[str] = []
         in_about: bool = False
 
         for line in data:
@@ -16,11 +17,11 @@ class TaskDBEntityDataParser(IDBEntityDataParser):
                 in_metadata = False
 
             if in_metadata:
-                metadata_section.append(line)
+                raw_metadata.append(line)
                 # sanity check: one section at a time
                 continue
 
-            if line.startswith("---") and len(metadata_section) == 0:
+            if line.startswith("---") and len(raw_metadata) == 0:
                 in_metadata = True
                 # sanity check: one section at a time
                 continue
@@ -30,19 +31,19 @@ class TaskDBEntityDataParser(IDBEntityDataParser):
                 break
 
             if in_about:
-                about_section.append(line)
+                raw_about.append(line)
                 continue
 
-            if re.match(r"(\|\s*-+\s*){2}\|", line) and len(about_section) == 0:
+            if re.match(r"(\|\s*-+\s*){2}\|", line) and len(raw_about) == 0:
                 in_about = True
 
-        metadata = _parse_metadata_section(metadata_section)
-        about = _parse_about_section(about_section)
+        metadata = _parse_metadata_section(raw_metadata)
+        about = _parse_about_section(raw_about)
 
         return _collate_parsed_sections(metadata, about, data)
 
 
-def _parse_metadata_section(section: list[str]) -> dict[str, str]:
+def _parse_metadata_section(raw: list[str]) -> dict[str, str]:
     parsed = {}
 
     parsed["title"] = ""
@@ -50,7 +51,7 @@ def _parse_metadata_section(section: list[str]) -> dict[str, str]:
     parsed["created"] = ""
     parsed["id"] = ""
 
-    for line in section:
+    for line in raw:
         l = re.split(r":", line, 1)
         key = l[0].strip()
         val = l[1].strip()
@@ -68,7 +69,7 @@ def _parse_metadata_section(section: list[str]) -> dict[str, str]:
     return parsed
 
 
-def _parse_about_section(section: list[str]) -> dict[str, str | list[str]]:
+def _parse_about_section(raw: list[str]) -> dict[str, str | list[str]]:
     parsed: dict[str, str | list[str]] = {}
 
     parsed["requestor"] = ""
@@ -79,7 +80,7 @@ def _parse_about_section(section: list[str]) -> dict[str, str | list[str]]:
     parsed["tags"] = []
     parsed["due"] = ""
 
-    for line in section:
+    for line in raw:
         l = re.split(r"\|", line)
         key = l[1].strip()
         val = l[2].strip()

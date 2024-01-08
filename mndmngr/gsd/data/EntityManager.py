@@ -19,9 +19,8 @@ def get(
         return None
 
     [path, data] = res
-    parsed: IDBEntityData = parser.parse(data)
 
-    return Entity(path, parsed)
+    return Entity(path, parser.parse(data))
 
 
 def get_many(
@@ -30,12 +29,12 @@ def get_many(
     query: IDBMultiQuery,
     *query_args: str,
 ) -> list[IDBEntity] | None:
-    result = query.run(*query_args)
+    res = query.run(*query_args)
 
-    if result is None:
+    if res is None:
         return None
 
-    return [Entity(path, parser.parse(data)) for [path, data] in result.items()]
+    return [Entity(path, parser.parse(data)) for [path, data] in res.items()]
 
 
 def write(data: IDBEntityData) -> None:
