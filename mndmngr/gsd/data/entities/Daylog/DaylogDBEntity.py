@@ -9,7 +9,7 @@ from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
 
 
 class DaylogDBEntity(IDBEntity):
-    def __init__(self, path: str, data: DaylogEntityData | None):
+    def __init__(self, path: str, data: DaylogEntityData | None = None):
         self._path = path
         self._data = data
 

@@ -49,13 +49,11 @@ class ConfigParser(object):
         if not config_json:
             raise Exception("config is empty")
 
-        daylog_section_delimiter = config_json["daylog"]["daylog_section_delimiter"]
+        daylog_section_delimiter = config_json["daylog"]["section_delimiter"]
         if not isinstance(daylog_section_delimiter, str):
             raise Exception("config does not match expected format")
 
-        daylog_subsection_delimiter = config_json["daylog"][
-            "daylog_subsection_delimiter"
-        ]
+        daylog_subsection_delimiter = config_json["daylog"]["subsection_delimiter"]
         if not isinstance(daylog_subsection_delimiter, str):
             raise Exception("config does not match expected format")
 

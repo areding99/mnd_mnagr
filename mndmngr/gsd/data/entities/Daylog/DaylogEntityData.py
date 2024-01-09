@@ -10,7 +10,7 @@ class DaylogEntityData(IDBEntityData):
         created: str,
         id: str,
         tasks: dict[str, list[tuple[TaskDBEntity, bool]]],
-        todos: list[tuple[str, bool]],
+        todos: dict[str, list[tuple[str, bool]]],
         notes: str,
         today_summary: str,
         yesterday_summary: str,

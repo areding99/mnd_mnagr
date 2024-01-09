@@ -23,3 +23,14 @@ class IDBEntity(ABC):
 
     def is_initialized(self) -> bool:
         return self._data is not None
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, IDBEntity):
+            return NotImplemented
+
+        if not isinstance(self, other.__class__):
+            return NotImplemented
+
+        print(other.__class__)
+
+        return self.get_path() == other.get_path()
