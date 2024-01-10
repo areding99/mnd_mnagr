@@ -23,12 +23,12 @@ class TaskDBEntityDataParser(IDBEntityDataParser):
 
             if line.startswith("---") and len(raw_metadata) == 0:
                 in_metadata = True
-                # sanity check: one section at a time
                 continue
 
-            # about section -----------------
-            if line == "\n" and in_about:
-                break
+            # remaining sections -----------------
+            if line.startswith("# overview"):
+                in_about = False
+                continue
 
             if in_about:
                 raw_about.append(line)
@@ -81,6 +81,8 @@ def _parse_about_section(raw: list[str]) -> dict[str, str | list[str]]:
     parsed["due"] = ""
 
     for line in raw:
+        if line.strip() == "":
+            continue
         l = re.split(r"\|", line)
         key = l[1].strip()
         val = l[2].strip()

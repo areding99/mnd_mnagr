@@ -463,50 +463,26 @@ def daylog_parsed(
 def test_parse_metadata_section(
     metadata_only_as_list: list[str], metadata_parsed: dict[str, str]
 ) -> None:
-    parsed = _parse_metadata_section(metadata_only_as_list)
-    sample = metadata_parsed
-
-    assert len(parsed) == len(sample)
-
-    for key in parsed:
-        assert parsed[key] == sample[key]
+    assert _parse_metadata_section(metadata_only_as_list) == metadata_parsed
 
 
 def test_parse_tasks_section(
     tasks_only_as_list: list[str],
     tasks_parsed: dict[str, list[tuple[TaskDBEntity, bool]]],
 ) -> None:
-    parsed = _parse_tasks_section(tasks_only_as_list)
-    sample = tasks_parsed
-
-    assert len(parsed) == len(sample)
-
-    for key in parsed:
-        assert parsed[key] == sample[key]
+    assert _parse_tasks_section(tasks_only_as_list) == tasks_parsed
 
 
 def test_parse_todos_section(
     todos_only_as_list: list[str], todos_parsed: dict[str, list[tuple[str, bool]]]
 ) -> None:
-    parsed = _parse_todos_section(todos_only_as_list)
-    sample = todos_parsed
-
-    assert len(parsed) == len(sample)
-
-    for one, two in zip(parsed, sample):
-        assert one == two
+    assert _parse_todos_section(todos_only_as_list) == todos_parsed
 
 
 def test_parse_summary_section(
     summary_as_list: list[str], summary_parsed: dict[str, str]
 ) -> None:
-    parsed = _parse_summary_section(summary_as_list)
-    sample = summary_parsed
-
-    assert len(parsed) == len(sample)
-
-    for key, val in parsed.items():
-        assert val == sample[key]
+    assert _parse_summary_section(summary_as_list) == summary_parsed
 
 
 def test_parse_entire_daylog(
