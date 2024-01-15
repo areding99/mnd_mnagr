@@ -24,11 +24,7 @@ My first project with the new team! It's a small one & not too important but I p
 # progress
 
 - [ ] get requirements
-
 - [ ] review codebase
-
 - [ ] write the feature
-
 - [ ] test
-
 - [ ] ship

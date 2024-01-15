@@ -143,6 +143,7 @@ def _parse_tasks_section(
                 continue
 
             task_ref = TaskDBEntity(os.environ["PROJECT_ROOT"] + path)
+
             tasks_by_section[section_name].append(
                 (task_ref, not is_incomplete_md_todo_item(line))
             )

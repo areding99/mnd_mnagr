@@ -18,13 +18,11 @@ id: 3e127e25-02c0-4803-a48f-4530b49ce9d7
 | due         | 2020    |
 
 # overview
-
 My personal website is complete but not exciting. This is a request to make it more interesting.
-
 # progress
-
 - [ ] come up with a theme
-
 - [ ] add some content
-
 - [ ] write the code
+
+
+

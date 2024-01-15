@@ -7,11 +7,14 @@ class TaskDBEntityDataParser(IDBEntityDataParser):
     def parse(self, data: list[str]) -> TaskEntityData:
         raw_metadata: list[str] = []
         raw_about: list[str] = []
+        rest: list[str] = []
 
         in_metadata: bool = False
         in_about: bool = False
+        in_rest: bool = False
 
         for line in data:
+            print(repr(line))
             # metadata section -----------------
             if line.startswith("---"):
                 in_metadata = False
@@ -26,8 +29,9 @@ class TaskDBEntityDataParser(IDBEntityDataParser):
                 continue
 
             # remaining sections -----------------
-            if line.startswith("# overview"):
+            if line.strip() == "" and in_about:
                 in_about = False
+                in_rest = True
                 continue
 
             if in_about:
@@ -36,11 +40,15 @@ class TaskDBEntityDataParser(IDBEntityDataParser):
 
             if re.match(r"(\|\s*-+\s*){2}\|", line) and len(raw_about) == 0:
                 in_about = True
+                continue
+
+            if in_rest:
+                rest.append(line)
 
         metadata = _parse_metadata_section(raw_metadata)
         about = _parse_about_section(raw_about)
 
-        return _collate_parsed_sections(metadata, about, data)
+        return _collate_parsed_sections(metadata, about, rest)
 
 
 def _parse_metadata_section(raw: list[str]) -> dict[str, str]:

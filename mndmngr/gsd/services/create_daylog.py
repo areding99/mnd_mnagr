@@ -4,6 +4,7 @@ import os, datetime, uuid, dotenv, sys
 dotenv.load_dotenv()
 sys.path.append(os.environ["PROJECT_ROOT"])
 
+from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 from mndmngr.gsd.data.entities.Daylog.DaylogDBEntity import DaylogDBEntity
 from mndmngr.gsd.data.entities.Daylog.DaylogDBEntityWriter import DaylogDBEntityWriter
 from mndmngr.gsd.data.entities.Daylog.DaylogDBEntityTaskFirstDataParser import (
@@ -68,6 +69,9 @@ def get_yesterday(year: int) -> DaylogDBEntity | None:
     return None
 
 
+# TODO s from testing: need to fix logic for completed tasks
+
+
 def create_daylog() -> None:
     date = datetime.datetime.now()
     year = date.year
@@ -85,12 +89,13 @@ def create_daylog() -> None:
         # treat as though yesterday doesn't exist
         return None
 
+    print(yesterday.get_path())
+
     # handle updates from yesterday
 
     for section in yesterday_data.tasks:
         for task, is_complete in yesterday_data.tasks[section]:
-            if is_complete:
-                set_task_status(task, "closed")
+            set_task_status(task, "closed")
 
     # collect data to carry over to today
 
