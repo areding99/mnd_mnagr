@@ -1,173 +1,153 @@
-import os, datetime, uuid, dotenv
-
-if __name__ == "__main__":
-    import sys
-
-    dotenv.load_dotenv()
-    sys.path.append(os.environ["PROJECT_ROOT"])
-# if not running as a script, the parent directory should already be added to path
-
-import mndmngr.gsd.task.db_driver.driver as task_dbdriver
-import mndmngr.gsd.task.utils.sort_tasks as task_sort_util
+import os, datetime, uuid, dotenv, sys
 
 
-from mndmngr.gsd.todo.todo_retrieval import get_todos_by_section
+dotenv.load_dotenv()
+sys.path.append(os.environ["PROJECT_ROOT"])
+
+from mndmngr.gsd.data.entities.Daylog.DaylogDBEntity import DaylogDBEntity
+from mndmngr.gsd.data.entities.Daylog.DaylogDBEntityWriter import DaylogDBEntityWriter
+from mndmngr.gsd.data.entities.Daylog.DaylogDBEntityTaskFirstDataParser import (
+    DaylogDBEntityTaskFirstDataParser,
+)
+from mndmngr.gsd.data.entities.Daylog.DaylogEntityData import DaylogEntityData
+from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
+from mndmngr.gsd.data.entities.Task.convenience.get_open_tasks_by_section import (
+    get_open_tasks_by_section,
+)
+from mndmngr.gsd.data.entities.Task.convenience.set_task_status import set_task_status
+from mndmngr.gsd.data.entities.Task.convenience.sort_tasks import sort_tasks
+from mndmngr.gsd.data.queries.PathDBQuery import PathDBQuery
+from mndmngr.gsd.utilities.get_weekday import get_weekday
+
+import mndmngr.gsd.data.EntityManager as EntityManager
 
 
-def write_header(f_name: str, date: datetime.datetime) -> None:
-    with open(f_name, "w+") as f_io:
-        if f_io.read() != "":
-            print("file is not empty, header should be the first thing written")
-            return
-
-        f_io.write("---\n")
-        f_io.write("title: " + today + "\n")
-        f_io.write(
-            "path: "
-            + os.environ["DAILY_LOG_REL_PATH"]
-            + "/"
-            + str(date.year)
-            + "/"
-            + today_log_name
-            + "\n"
-        )
-        f_io.write("created: " + str(date.date()) + " " + str(date.time())[:5] + "\n")
-        f_io.write("id: " + str(uuid.uuid4()) + "\n")
-        f_io.write("---\n\n")
-        f_io.write("# " + get_weekday(date) + ", " + str(date.date()) + "\n\n")
-
-
-def write_tasks(f_name: str) -> None:
-    tasks = task_dbdriver.read().query_all_tasks_by_section()
-    tasks = task_sort_util.get_sorted_tasks_by_section(tasks)
-
-    if not tasks:
-        print("no tasks found, skipping...")
-        return None
-
-    with open(f_name, "a+") as f_io:
-        f_io.write("# tasks\n\n")
-
-        for section in tasks:
-            f_io.write("## " + section + "\n\n")
-            for task in tasks[section]:
-                f_io.write(
-                    "-[ ] ["
-                    + task.metadata.title
-                    + "](/"
-                    + task.metadata.path
-                    + ")  \n"
-                )
-            f_io.write("\n")
-
-    return None
-
-
-def write_todos(f_name: str) -> None:
-    todos = get_todos_by_section()
-
-    if not todos:
-        print("no todos found, skipping...")
-        return None
-
-    with open(f_name, "a+") as f_io:
-        f_io.write("# todos\n\n")
-
-        for section in todos:
-            f_io.write("## " + section + "\n\n")
-            for todo in todos[section]:
-                f_io.write("-[ ] " + todo + "  \n")
-            f_io.write("\n")
-
-    return None
-
-
-def get_weekday(date: datetime.datetime) -> str:
-    today = date.weekday()
-
-    if today == 0:
-        return "Monday"
-    elif today == 1:
-        return "Tuesday"
-    elif today == 2:
-        return "Wednesday"
-    elif today == 3:
-        return "Thursday"
-    elif today == 4:
-        return "Friday"
-    elif today == 5:
-        return "Saturday"
-    else:
-        return "Sunday"
-
-
-def nav_to_year(date: datetime.datetime) -> int:
-    """returns the current year & navigates to the year's directory in the daily log"""
-    os.chdir(os.environ["DAILY_LOG_PATH"])
-    year = date.year
-
-    if not os.path.isdir(str(year)):
-        os.mkdir(str(year))
-
-    os.chdir(str(year))
-    return year
+def create_year_if_not_exists(year: int) -> None:
+    if not os.path.exists(os.environ["DAILY_LOG_PATH"] + "/" + str(year)):
+        os.mkdir(os.environ["DAILY_LOG_PATH"] + "/" + str(year))
 
 
 def get_yesterday_f_name(year: int) -> str | None:
-    if len(os.listdir()) > 0:
-        return max(os.listdir())
+    # check this year for yesterday's log
+    this_year_dir_conents = os.listdir(os.environ["DAILY_LOG_PATH"] + "/" + str(year))
+
+    if len(this_year_dir_conents) != 0:
+        return max(this_year_dir_conents)
 
     # check last year for a note if there's not one this year
-    os.chdir("..")
-    previous_year_dir = str(year - 1)
+    prev_year_dir_contents = os.listdir(
+        os.environ["DAILY_LOG_PATH"] + "/" + str(year - 1)
+    )
 
-    if not os.path.isdir(previous_year_dir):
-        os.chdir(str(year))
-        return None
+    if len(prev_year_dir_contents) != 0:
+        return (
+            os.environ["DAILY_LOG_PATH"]
+            + "/"
+            + str(year - 1)
+            + "/"
+            + max(prev_year_dir_contents)
+        )
 
-    os.chdir(previous_year_dir)
-
-    if len(os.listdir()) == 0:
-        return None
-
-    yesterday = max(os.listdir())
-
-    os.chdir("..")
-    os.chdir(str(year))
-
-    return yesterday
+    return None
 
 
-def get_yesterday_summary(year: int) -> str | None:
+def get_yesterday(year: int) -> DaylogDBEntity | None:
     yesterday = get_yesterday_f_name(year)
 
-    if yesterday == None:
-        # no summary for yesterday
+    if yesterday is None:
         return None
 
-    # get yesterday's summary
-    return ""
+    query = PathDBQuery()
+    query.set_query_args(yesterday)
+
+    res = EntityManager.get(DaylogDBEntity, DaylogDBEntityTaskFirstDataParser(), query)
+
+    if isinstance(res, DaylogDBEntity):
+        return res
+
+    return None
 
 
-# START OF SCRIPT
-date = datetime.datetime.now()
-year = nav_to_year(date)
+def create_daylog() -> None:
+    date = datetime.datetime.now()
+    year = date.year
+    create_year_if_not_exists(year)
+    yesterday = get_yesterday(year)
 
-# handle yesterday: update tasks, todos as required by presence of checkmarks
+    if yesterday is None:
+        # TODO - handle this case
 
-yesterday_summary = get_yesterday_summary(year)
+        return None
 
-today = str(date.date())
-today_log_name = today + ".md"
+    yesterday_data = yesterday.get_data()
 
-# for now, overwrite (i.e. leave following commented out)
+    if not isinstance(yesterday_data, DaylogEntityData):
+        # treat as though yesterday doesn't exist
+        return None
 
-# if (os.path.isfile(today_log_name)):
-#   print("you've already created a daily log for today")
-#   exit(1)
+    # handle updates from yesterday
 
-write_header(today_log_name, date)
-write_tasks(today_log_name)
-write_todos(today_log_name)
-# write_today_summary
-# write_yesterday_summary
+    for section in yesterday_data.tasks:
+        for task, is_complete in yesterday_data.tasks[section]:
+            if is_complete:
+                set_task_status(task, "closed")
+
+    # collect data to carry over to today
+
+    open_todos_by_section: dict[str, list[str]] = {}
+
+    for section in yesterday_data.todos:
+        for todo, is_complete in yesterday_data.todos[section]:
+            if not is_complete:
+                if section not in open_todos_by_section:
+                    open_todos_by_section[section] = []
+
+                open_todos_by_section[section].append(todo)
+
+    formatted_todos_by_section: dict[str, list[tuple[str, bool]]] = {}
+
+    for section in open_todos_by_section:
+        formatted_todos_by_section[section] = [
+            (todo, False) for todo in open_todos_by_section[section]
+        ]
+
+    yesterday_summary = yesterday_data.today_summary
+
+    # gather open tasks
+
+    open_tasks_by_section = get_open_tasks_by_section()
+    sorted_formatted_tasks_by_section: dict[str, list[tuple[TaskDBEntity, bool]]] = {}
+
+    for section in open_tasks_by_section:
+        sorted_formatted_tasks_by_section[section] = [
+            (task, False)
+            for task in sort_tasks(open_tasks_by_section[section])
+            if task is not None
+        ]
+
+    # create data as necessary
+    today = str(date.date())
+    path = DaylogDBEntity.get_entity_path() + "/" + str(year) + "/" + today + ".md"
+    created = str(date.date()) + " " + str(date.time())[:5]
+    id = str(uuid.uuid4())
+    header = get_weekday(date) + ", " + str(date.date())
+
+    daylog_data = DaylogEntityData(
+        today,
+        path,
+        created,
+        id,
+        header,
+        sorted_formatted_tasks_by_section,
+        formatted_todos_by_section,
+        "",
+        "",
+        yesterday_summary,
+    )
+
+    daylog = DaylogDBEntity(path, daylog_data)
+    EntityManager.write(daylog, DaylogDBEntityWriter())
+
+
+# run it!
+create_daylog()

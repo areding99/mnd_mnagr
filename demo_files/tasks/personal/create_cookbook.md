@@ -11,10 +11,10 @@ id: d4d4e3ba-51ff-470e-9832-224ec8731027
 | ----------- | ----------- |
 | requestor   | andy        |
 | subscribers | andy, marin |
-| status      | in_progress |
+| status      | closed      |
 | urgency     | low         |
-| priority    | high        |
 | tags        | feature     |
+| priority    | high        |
 | due         | n/a         |
 
 # overview

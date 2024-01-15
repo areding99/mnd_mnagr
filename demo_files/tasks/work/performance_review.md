@@ -11,10 +11,10 @@ id: 21db8ea6-4296-45ac-953c-422c440dc100
 | ----------- | ---------------- |
 | requestor   | my_manager       |
 | subscribers | andy, my_manager |
-| status      | planned          |
+| status      | closed           |
 | urgency     | medium           |
-| priority    | high             |
 | tags        | admin            |
+| priority    | high             |
 | due         | 0                |
 
 # overview

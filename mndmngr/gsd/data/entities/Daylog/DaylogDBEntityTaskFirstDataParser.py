@@ -1,3 +1,4 @@
+import os
 import re
 from mndmngr.config.config_parser import ConfigParser
 from mndmngr.gsd.data.entities.Daylog.DaylogEntityData import DaylogEntityData
@@ -13,12 +14,13 @@ from mndmngr.lib.parsing.utils import (
 class DaylogDBEntityTaskFirstDataParser(IDBEntityDataParser):
     def parse(self, data: list[str]) -> DaylogEntityData:
         raw_metadata: list[str] = []
+        raw_header: str = ""
         raw_tasks_section: list[str] = []
         raw_todos_section: list[str] = []
         raw_summary_section: list[str] = []
-        print(data)
 
         in_metadata: bool = False
+        seen_header: bool = False
         in_tasks_section: bool = False
         in_todos_section: bool = False
         in_summary_section: bool = False
@@ -36,6 +38,15 @@ class DaylogDBEntityTaskFirstDataParser(IDBEntityDataParser):
             if line.startswith("---") and len(raw_metadata) == 0:
                 in_metadata = True
                 # sanity check; one section at a time
+                continue
+
+            if line.startswith("# tasks"):
+                # there is no header; skip this section & don't affect tasks parsing
+                seen_header = True
+
+            if line.startswith("#") and not seen_header:
+                raw_header = line
+                seen_header = True
                 continue
 
             # body (tasks -> todos -> summary) -----------------
@@ -66,12 +77,16 @@ class DaylogDBEntityTaskFirstDataParser(IDBEntityDataParser):
                 raw_summary_section.append(line)
 
         metadata = _parse_metadata_section(raw_metadata)
-
+        header = _parse_header(raw_header)
         tasks = _parse_tasks_section(raw_tasks_section)
         todos = _parse_todos_section(raw_todos_section)
         summary = _parse_summary_section(raw_summary_section)
 
-        return _collate_parsed_sections(metadata, tasks, todos, summary, data)
+        return _collate_parsed_sections(metadata, header, tasks, todos, summary)
+
+
+def _parse_header(raw: str) -> str:
+    return raw[1:].strip()
 
 
 def _parse_metadata_section(raw: list[str]) -> dict[str, str]:
@@ -127,7 +142,7 @@ def _parse_tasks_section(
                 print("task path not found")
                 continue
 
-            task_ref = TaskDBEntity(path)
+            task_ref = TaskDBEntity(os.environ["PROJECT_ROOT"] + path)
             tasks_by_section[section_name].append(
                 (task_ref, not is_incomplete_md_todo_item(line))
             )
@@ -203,20 +218,20 @@ def _parse_summary_section(raw: list[str]) -> dict[str, str]:
 
 def _collate_parsed_sections(
     metadata: dict[str, str],
+    header: str,
     tasks: dict[str, list[tuple[TaskDBEntity, bool]]],
     todos: dict[str, list[tuple[str, bool]]],
     summary: dict[str, str],
-    raw: list[str],
 ) -> DaylogEntityData:
     return DaylogEntityData(
         title=metadata["title"],
         path=metadata["path"],
         created=metadata["created"],
         id=metadata["id"],
+        header=header,
         tasks=tasks,
         todos=todos,
         notes=summary["notes"],
         today_summary=summary["today_summary"],
         yesterday_summary=summary["yesterday_summary"],
-        raw=raw,
     )

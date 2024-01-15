@@ -18,6 +18,9 @@ class IDBEntity(ABC):
     def get_data(self) -> IDBEntityData | None:
         return self._data
 
+    def set_data(self, data: IDBEntityData) -> None:
+        self._data = data
+
     def get_path(self) -> str:
         return self._path
 

@@ -11,10 +11,10 @@ id: f217bfb5-c99e-4c48-958d-99b63935426c
 | ----------- | -------------- |
 | requestor   | andy           |
 | subscribers | my_manager, me |
-| status      | in_progress    |
+| status      | closed         |
 | urgency     | high           |
-| priority    | low            |
 | tags        | feature        |
+| priority    | low            |
 | due         | 2023-11-21     |
 
 # overview
@@ -24,7 +24,11 @@ My first project with the new team! It's a small one & not too important but I p
 # progress
 
 - [ ] get requirements
+
 - [ ] review codebase
+
 - [ ] write the feature
+
 - [ ] test
+
 - [ ] ship

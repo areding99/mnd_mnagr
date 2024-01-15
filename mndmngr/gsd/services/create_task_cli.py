@@ -12,10 +12,13 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     sys.path.append(os.environ["PROJECT_ROOT"])
 
-from mndmngr.gsd.task.db_driver.read import task_exists_at
-from mndmngr.gsd.task.task import Task, TaskArgs, TaskMetadata, TaskAbout
 from mndmngr.config.config_parser import ConfigParser, Config
 from mndmngr.lib.typing.is_list_of_str import is_list_of_str
+from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
+from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
+from mndmngr.gsd.data.entities.Task.TaskDBEntityWriter import TaskDBEntityWriter
+from mndmngr.gsd.data.entities.Task.convenience.task_exists_at import task_exists_at
+import mndmngr.gsd.data.EntityManager as EntityManager
 
 
 class TaskCLIInput(NamedTuple):
@@ -226,13 +229,13 @@ def parse_task_creation_input(raw_input: dict[str, list[str] | str]) -> TaskCLII
     )
 
 
-def create_task_from_cli() -> Task:
+def create_task_from_cli() -> None:
     raw_input = prompt_for_task_creation_input()
     parsed_input = parse_task_creation_input(raw_input)
 
-    metadata = TaskMetadata(
+    data = TaskEntityData(
         parsed_input.title,
-        os.environ["TASKS_REL_PATH"]
+        TaskDBEntity.get_entity_path()
         + "/"
         + parsed_input.section
         + "/"
@@ -240,28 +243,20 @@ def create_task_from_cli() -> Task:
         + ".md",
         datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         str(uuid.uuid4()),
-    )
-
-    about_section = TaskAbout(
         parsed_input.requestor,
         parsed_input.subscribers,
         parsed_input.status,
         parsed_input.urgency,
-        parsed_input.priority,
         parsed_input.tags,
+        parsed_input.priority,
         parsed_input.due,
+        [parsed_input.overview],
     )
 
-    return Task(
-        metadata.path,
-        task_args=TaskArgs(metadata, about_section, [parsed_input.overview]),
-    )
+    task = TaskDBEntity(data.path, data)
+    created = EntityManager.write(task, TaskDBEntityWriter())
 
-
-def create_task_from_cli_and_persist() -> Task:
-    task = create_task_from_cli()
-    task.persist()
-    return task
-
-
-create_task_from_cli_and_persist()
+    if created:
+        print("task created at: " + task.get_path())
+    else:
+        print("task creation failed")

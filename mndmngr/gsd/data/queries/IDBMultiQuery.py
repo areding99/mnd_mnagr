@@ -3,5 +3,8 @@ from abc import ABC, abstractmethod
 
 class IDBMultiQuery(ABC):
     @abstractmethod
-    def run(self, *args: str) -> dict[str, list[str]]:
+    def run(self) -> dict[str, list[str]]:
         pass
+
+    def set_query_args(self, *args: str) -> None:
+        self._query_args = args

@@ -88,6 +88,22 @@ def metadata_parsed(metadata_only_as_list: list[str]) -> dict[str, str]:
     return res
 
 
+# HEADER
+
+HEADER_CONTENT = "Monday, 11-12-2023"
+HEADER_LINE_ZERO = "# " + HEADER_CONTENT
+
+
+@pytest.fixture
+def header_raw() -> str:
+    return HEADER_LINE_ZERO
+
+
+@pytest.fixture
+def header_parsed() -> str:
+    return HEADER_CONTENT
+
+
 # TASKS
 
 TASKS_LINE_ZERO = "# tasks"
@@ -400,12 +416,12 @@ def summary_parsed() -> dict[str, str]:
 
 @pytest.fixture
 def daylog_raw(
-    metadata_raw: str, tasks_raw: str, todos_raw: str, summary_raw: str
+    metadata_raw: str, header_raw: str, tasks_raw: str, todos_raw: str, summary_raw: str
 ) -> str:
     return "\n".join(
         [
             metadata_raw,
-            "some header, likely date",
+            header_raw,
             tasks_raw,
             todos_raw,
             summary_raw,
@@ -416,13 +432,14 @@ def daylog_raw(
 @pytest.fixture
 def daylog_as_list(
     metadata_section_as_list: list[str],
+    header_raw: str,
     tasks_section_as_list: list[str],
     todos_section_as_list: list[str],
     summary_as_list: list[str],
 ) -> list[str]:
     return [
         *metadata_section_as_list,
-        "some header, likely date",
+        header_raw,
         *tasks_section_as_list,
         *todos_section_as_list,
         "# summary",
@@ -432,8 +449,8 @@ def daylog_as_list(
 
 @pytest.fixture
 def daylog_parsed(
-    daylog_as_list: list[str],
     metadata_parsed: dict[str, str],
+    header_parsed: str,
     summary_parsed: dict[str, str],
     tasks_parsed: dict[str, list[tuple[TaskDBEntity, bool]]],
     todos_parsed: dict[str, list[tuple[str, bool]]],
@@ -446,12 +463,12 @@ def daylog_parsed(
         path=metadata["path"],
         created=metadata["created"],
         id=metadata["id"],
+        header=header_parsed,
         tasks=tasks_parsed,
         todos=todos_parsed,
         notes=summary["notes"],
         today_summary=summary["today_summary"],
         yesterday_summary=summary["yesterday_summary"],
-        raw=daylog_as_list,
     )
 
 
@@ -510,4 +527,3 @@ def test_parse_entire_daylog(
     assert parsed.notes == sample.notes
     assert parsed.today_summary == sample.today_summary
     assert parsed.yesterday_summary == sample.yesterday_summary
-    assert parsed.raw == sample.raw
