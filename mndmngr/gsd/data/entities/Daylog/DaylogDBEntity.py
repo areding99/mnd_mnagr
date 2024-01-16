@@ -19,4 +19,4 @@ class DaylogDBEntity(IDBEntity):
 
     @staticmethod
     def get_entity_path() -> str:
-        return os.environ["DAILY_LOG_REL_PATH"]
+        return os.environ["DAILY_LOG_PATH"]

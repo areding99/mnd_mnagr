@@ -60,7 +60,6 @@ class TaskDBEntityWriter(IDBEntityWriter):
             f_io.write("\n")
             f_io.write("\n")
             f_io.write("".join(data.body))
-            f_io.write("\n")
 
     def _get_max_len_val(self, data: TaskEntityData) -> int:
         max_leng_val = 0

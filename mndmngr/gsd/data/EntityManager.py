@@ -64,7 +64,7 @@ def write(ent: IDBEntity, writer: IDBEntityWriter) -> bool:
     try:
         writer.write(ent)
     except Exception as e:
-        print("error writing task: " + str(e))
+        print("error writing ent: " + str(e))
         return False
 
     return True

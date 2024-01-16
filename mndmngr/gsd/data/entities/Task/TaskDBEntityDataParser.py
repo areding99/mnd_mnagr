@@ -14,7 +14,6 @@ class TaskDBEntityDataParser(IDBEntityDataParser):
         in_rest: bool = False
 
         for line in data:
-            print(repr(line))
             # metadata section -----------------
             if line.startswith("---"):
                 in_metadata = False

@@ -19,6 +19,14 @@ class DaylogDBEntityWriter(IDBEntityWriter):
         if not isinstance(data, DaylogEntityData):
             raise TypeError("data must be of type DaylogEntityData")
 
+        print(data.created)
+        print(data.title)
+        print(data.path)
+        print(data.id)
+        print(data.header)
+        print(data.tasks)
+        print(data.todos)
+
         with open(entity.get_path(), "w") as f_io:
             f_io.write("---")
             f_io.write("\n")

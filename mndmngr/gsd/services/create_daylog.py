@@ -30,10 +30,16 @@ def create_year_if_not_exists(year: int) -> None:
 
 def get_yesterday_f_name(year: int) -> str | None:
     # check this year for yesterday's log
-    this_year_dir_conents = os.listdir(os.environ["DAILY_LOG_PATH"] + "/" + str(year))
+    this_year_dir_contents = os.listdir(os.environ["DAILY_LOG_PATH"] + "/" + str(year))
 
-    if len(this_year_dir_conents) != 0:
-        return max(this_year_dir_conents)
+    if len(this_year_dir_contents) != 0:
+        return (
+            os.environ["DAILY_LOG_PATH"]
+            + "/"
+            + str(year - 1)
+            + "/"
+            + max(this_year_dir_contents)
+        )
 
     # check last year for a note if there's not one this year
     prev_year_dir_contents = os.listdir(
@@ -69,12 +75,28 @@ def get_yesterday(year: int) -> DaylogDBEntity | None:
     return None
 
 
-# TODO s from testing: need to fix logic for completed tasks
+def today_exists(path: str) -> bool:
+    if os.path.exists(path):
+        return True
+
+    return False
 
 
 def create_daylog() -> None:
     date = datetime.datetime.now()
     year = date.year
+
+    # create metadata as necessary
+    today = str(date.date())
+    path = DaylogDBEntity.get_entity_path() + "/" + str(year) + "/" + today + ".md"
+    created = str(date.date()) + " " + str(date.time())[:5]
+    id = str(uuid.uuid4())
+    header = get_weekday(date) + ", " + str(date.date())
+
+    if today_exists(path):
+        print("today's daylog already exists")
+        return
+
     create_year_if_not_exists(year)
     yesterday = get_yesterday(year)
 
@@ -124,18 +146,14 @@ def create_daylog() -> None:
     sorted_formatted_tasks_by_section: dict[str, list[tuple[TaskDBEntity, bool]]] = {}
 
     for section in open_tasks_by_section:
+        print("open tasks found: " + str(len(open_tasks_by_section[section])))
+
+    for section in open_tasks_by_section:
         sorted_formatted_tasks_by_section[section] = [
             (task, False)
             for task in sort_tasks(open_tasks_by_section[section])
             if task is not None
         ]
-
-    # create data as necessary
-    today = str(date.date())
-    path = DaylogDBEntity.get_entity_path() + "/" + str(year) + "/" + today + ".md"
-    created = str(date.date()) + " " + str(date.time())[:5]
-    id = str(uuid.uuid4())
-    header = get_weekday(date) + ", " + str(date.date())
 
     daylog_data = DaylogEntityData(
         today,
