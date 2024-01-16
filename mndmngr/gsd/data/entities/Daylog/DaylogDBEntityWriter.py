@@ -20,14 +20,6 @@ class DaylogDBEntityWriter(IDBEntityWriter):
         if not isinstance(data, DaylogEntityData):
             raise TypeError("data must be of type DaylogEntityData")
 
-        print(data.created)
-        print(data.title)
-        print(data.path)
-        print(data.id)
-        print(data.header)
-        print(data.tasks)
-        print(data.todos)
-
         with open(entity.get_absolute_path(), "w") as f_io:
             f_io.write("---")
             f_io.write("\n")
@@ -76,8 +68,6 @@ class DaylogDBEntityWriter(IDBEntityWriter):
                     f_io.write("- [" + ("x" if is_complete else " ") + "] " + todo)
                     f_io.write("\n")
                 f_io.write("\n")
-            f_io.write("\n")
-            f_io.write("\n")
             f_io.write("# summary")
             f_io.write("\n")
             f_io.write("\n")

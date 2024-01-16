@@ -170,7 +170,7 @@ def _parse_todos_section(raw: list[str]) -> dict[str, list[tuple[str, bool]]]:
 
         if line.startswith("-"):
             todos[section_name].append(
-                (strip_md_todo_item(line), is_incomplete_md_todo_item(line))
+                (strip_md_todo_item(line), not is_incomplete_md_todo_item(line))
             )
 
     return todos

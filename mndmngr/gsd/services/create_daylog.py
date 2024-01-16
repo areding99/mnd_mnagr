@@ -113,8 +113,6 @@ def create_daylog() -> None:
         # treat as though yesterday doesn't exist
         return None
 
-    print(yesterday.get_path())
-
     # handle updates from yesterday
 
     for section in yesterday_data.tasks:
@@ -147,9 +145,6 @@ def create_daylog() -> None:
 
     open_tasks_by_section = get_open_tasks_by_section()
     sorted_formatted_tasks_by_section: dict[str, list[tuple[TaskDBEntity, bool]]] = {}
-
-    for section in open_tasks_by_section:
-        print("open tasks found: " + str(len(open_tasks_by_section[section])))
 
     for section in open_tasks_by_section:
         sorted_formatted_tasks_by_section[section] = [
