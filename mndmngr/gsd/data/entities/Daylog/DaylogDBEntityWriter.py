@@ -2,6 +2,7 @@ from mndmngr.gsd.data.entities.Daylog.DaylogDBEntity import DaylogDBEntity
 from mndmngr.gsd.data.entities.Daylog.DaylogEntityData import DaylogEntityData
 from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
 from mndmngr.gsd.data.entities.IDBEntityWriter import IDBEntityWriter
+from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 
 class DaylogDBEntityWriter(IDBEntityWriter):
@@ -52,16 +53,18 @@ class DaylogDBEntityWriter(IDBEntityWriter):
                 f_io.write("\n")
                 f_io.write("\n")
                 for task, is_complete in data.tasks[section]:
+                    task_data = task.get_data()
+                    if not isinstance(task_data, TaskEntityData):
+                        raise TypeError("data must be of type TaskEntityData")
+
                     f_io.write(
                         "- ["
                         + ("x" if is_complete else " ")
                         + "] "
-                        + f"[{task}]({task.get_path()})"
+                        + f"[{task_data.title}]({task.get_path()})"
                     )
                     f_io.write("\n")
                 f_io.write("\n")
-            f_io.write("\n")
-            f_io.write("\n")
             f_io.write("# todos")
             f_io.write("\n")
             f_io.write("\n")
