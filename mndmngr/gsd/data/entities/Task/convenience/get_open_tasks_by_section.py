@@ -24,7 +24,7 @@ def get_open_tasks_by_section() -> dict[str, list[TaskDBEntity]]:
         if section not in tasks_by_section:
             tasks_by_section[section] = []
 
-        path = TaskDBEntity.get_entity_path()
+        path = TaskDBEntity.get_entity_path_absolute()
         path += "/" + section + "/*.md"
 
         query = GlobPathDBQuery()

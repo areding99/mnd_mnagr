@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
+import os
 from mndmngr.gsd.data.entities.IDBEntityData import IDBEntityData
 
 
 class IDBEntity(ABC):
-    _path: str
+    _rel_path: str
     _data: IDBEntityData | None
 
     @abstractmethod
@@ -12,8 +13,20 @@ class IDBEntity(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_entity_path() -> str:
+    def get_entity_path_rel() -> str:
         pass
+
+    @staticmethod
+    @abstractmethod
+    def get_entity_path_absolute() -> str:
+        pass
+
+    @staticmethod
+    def get_entity_path_prefix() -> str:
+        return os.environ["PROJECT_ROOT"]
+
+    def get_absolute_path(self) -> str:
+        return IDBEntity.get_entity_path_prefix() + self.get_path()
 
     def get_data(self) -> IDBEntityData | None:
         return self._data
@@ -22,7 +35,7 @@ class IDBEntity(ABC):
         self._data = data
 
     def get_path(self) -> str:
-        return self._path
+        return self._rel_path
 
     def is_initialized(self) -> bool:
         return self._data is not None

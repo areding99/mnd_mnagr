@@ -1,4 +1,3 @@
-import os
 import re
 from mndmngr.config.config_parser import ConfigParser
 from mndmngr.gsd.data.entities.Daylog.DaylogEntityData import DaylogEntityData
@@ -142,7 +141,7 @@ def _parse_tasks_section(
                 print("task path not found")
                 continue
 
-            task_ref = TaskDBEntity(os.environ["PROJECT_ROOT"] + path)
+            task_ref = TaskDBEntity(path)
 
             tasks_by_section[section_name].append(
                 (task_ref, not is_incomplete_md_todo_item(line))

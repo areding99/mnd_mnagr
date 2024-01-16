@@ -11,7 +11,7 @@ id: f217bfb5-c99e-4c48-958d-99b63935426c
 | ----------- | -------------- |
 | requestor   | andy           |
 | subscribers | my_manager, me |
-| status      | planned        |
+| status      | closed         |
 | urgency     | high           |
 | tags        | feature        |
 | priority    | low            |

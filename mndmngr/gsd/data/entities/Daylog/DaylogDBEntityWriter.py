@@ -27,7 +27,7 @@ class DaylogDBEntityWriter(IDBEntityWriter):
         print(data.tasks)
         print(data.todos)
 
-        with open(entity.get_path(), "w") as f_io:
+        with open(entity.get_absolute_path(), "w") as f_io:
             f_io.write("---")
             f_io.write("\n")
             f_io.write(f"title: {data.title}")

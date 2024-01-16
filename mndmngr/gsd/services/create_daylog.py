@@ -88,12 +88,14 @@ def create_daylog() -> None:
 
     # create metadata as necessary
     today = str(date.date())
-    path = DaylogDBEntity.get_entity_path() + "/" + str(year) + "/" + today + ".md"
+    rel_path = (
+        DaylogDBEntity.get_entity_path_rel() + "/" + str(year) + "/" + today + ".md"
+    )
     created = str(date.date()) + " " + str(date.time())[:5]
     id = str(uuid.uuid4())
     header = get_weekday(date) + ", " + str(date.date())
 
-    if today_exists(path):
+    if today_exists(DaylogDBEntity.get_entity_path_prefix() + rel_path):
         print("today's daylog already exists")
         return
 
@@ -117,7 +119,8 @@ def create_daylog() -> None:
 
     for section in yesterday_data.tasks:
         for task, is_complete in yesterday_data.tasks[section]:
-            set_task_status(task, "closed")
+            if is_complete:
+                set_task_status(task, "closed")
 
     # collect data to carry over to today
 
@@ -157,7 +160,7 @@ def create_daylog() -> None:
 
     daylog_data = DaylogEntityData(
         today,
-        path,
+        rel_path,
         created,
         id,
         header,
@@ -168,7 +171,7 @@ def create_daylog() -> None:
         yesterday_summary,
     )
 
-    daylog = DaylogDBEntity(path, daylog_data)
+    daylog = DaylogDBEntity(rel_path, daylog_data)
     EntityManager.write(daylog, DaylogDBEntityWriter())
 
 

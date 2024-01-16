@@ -23,7 +23,9 @@ def get(
 
     [path, data] = res
 
-    return Entity(path, parser.parse(data))
+    to_trim = Entity.get_entity_path_prefix()
+
+    return Entity(path[len(to_trim) :], parser.parse(data))
 
 
 def get_many(
@@ -36,6 +38,12 @@ def get_many(
     if res is None:
         return None
 
+    to_trim = Entity.get_entity_path_prefix()
+    res = {
+        path[len(to_trim) :]: data
+        for [path, data] in res.items()
+        if path.startswith(to_trim)
+    }
     return [Entity(path, parser.parse(data)) for [path, data] in res.items()]
 
 
@@ -47,12 +55,12 @@ def initialize(
         return ent
 
     query = PathDBQuery()
-    query.set_query_args(ent.get_path())
+    query.set_query_args(ent.get_absolute_path())
 
     res = query.run()
 
     if res is None:
-        raise Exception("Entity not found at path: " + ent.get_path())
+        raise Exception("Entity not found at path: " + ent.get_absolute_path())
 
     data = parser.parse(res[1])
 

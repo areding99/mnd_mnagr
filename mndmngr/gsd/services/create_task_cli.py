@@ -235,7 +235,7 @@ def create_task_from_cli() -> None:
 
     data = TaskEntityData(
         parsed_input.title,
-        TaskDBEntity.get_entity_path()
+        TaskDBEntity.get_entity_path_rel()
         + "/"
         + parsed_input.section
         + "/"
