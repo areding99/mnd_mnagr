@@ -41,9 +41,12 @@ def get_open_tasks_by_section() -> dict[str, list[TaskDBEntity]]:
 
     for section in tasks_by_section:
         for task in tasks_by_section[section]:
+            if not task.is_initialized():
+                raise ValueError("task is not initialized")
+
             data = task.get_data()
-            if not isinstance(data, TaskEntityData):
-                raise TypeError("task data must be of type TaskEntityData")
+            if data is None:
+                raise ValueError("data cannot be None if task is initialized")
 
             if section not in open_tasks_by_section:
                 open_tasks_by_section[section] = []

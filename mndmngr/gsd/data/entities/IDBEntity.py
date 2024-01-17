@@ -1,14 +1,17 @@
 from abc import ABC, abstractmethod
 import os
 from mndmngr.gsd.data.entities.IDBEntityData import IDBEntityData
+from typing import TypeVar, Generic
+
+T = TypeVar("T", bound=IDBEntityData)
 
 
-class IDBEntity(ABC):
+class IDBEntity(ABC, Generic[T]):
     _rel_path: str
-    _data: IDBEntityData | None
+    _data: T | None
 
     @abstractmethod
-    def __init__(self, path: str, data: IDBEntityData | None = None):
+    def __init__(self, path: str, data: T | None = None):
         pass
 
     @staticmethod
@@ -28,10 +31,10 @@ class IDBEntity(ABC):
     def get_absolute_path(self) -> str:
         return IDBEntity.get_entity_path_prefix() + self.get_path()
 
-    def get_data(self) -> IDBEntityData | None:
+    def get_data(self) -> T | None:
         return self._data
 
-    def set_data(self, data: IDBEntityData) -> None:
+    def set_data(self, data: T) -> None:
         self._data = data
 
     def get_path(self) -> str:

@@ -96,16 +96,15 @@ def create_daylog() -> None:
     create_year_if_not_exists(year)
     yesterday = get_yesterday(year)
 
-    if yesterday is None:
+    if yesterday is None or not yesterday.is_initialized():
         # TODO - handle this case
 
         return None
 
     yesterday_data = yesterday.get_data()
 
-    if not isinstance(yesterday_data, DaylogEntityData):
-        # treat as though yesterday doesn't exist
-        return None
+    if yesterday_data is None:
+        raise ValueError("data cannot be None if entity is initialized")
 
     # handle updates from yesterday
 

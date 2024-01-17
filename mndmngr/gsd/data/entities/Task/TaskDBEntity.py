@@ -8,7 +8,7 @@ from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
 from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 
-class TaskDBEntity(IDBEntity):
+class TaskDBEntity(IDBEntity[TaskEntityData]):
     def __init__(self, path: str, data: TaskEntityData | None = None):
         if (data is not None) and (not isinstance(data, TaskEntityData)):
             raise TypeError("data must be of type TaskEntityData")

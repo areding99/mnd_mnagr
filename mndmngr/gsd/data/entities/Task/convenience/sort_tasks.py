@@ -51,9 +51,12 @@ def _sort_tasks_impl(
 
     # bucket by attribute val
     for task in tasks:
+        if not task.is_initialized():
+            raise ValueError("task is not initialized")
+
         data = task.get_data()
-        if not isinstance(data, TaskEntityData):
-            raise TypeError("task data must be of type TaskEntityData")
+        if data is None:
+            raise ValueError("data cannot be None if task is initialized")
 
         attr_val = getattr(data, category)
         if attr_val in attr_groups:

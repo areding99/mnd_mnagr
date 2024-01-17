@@ -17,8 +17,8 @@ class DaylogDBEntityWriter(IDBEntityWriter):
 
         data = entity.get_data()
 
-        if not isinstance(data, DaylogEntityData):
-            raise TypeError("data must be of type DaylogEntityData")
+        if data is None:
+            raise ValueError("data cannot be None if entity is initialized")
 
         with open(entity.get_absolute_path(), "w") as f_io:
             f_io.write("---")
@@ -45,9 +45,15 @@ class DaylogDBEntityWriter(IDBEntityWriter):
                 f_io.write("\n")
                 f_io.write("\n")
                 for task, is_complete in data.tasks[section]:
+                    if not task.is_initialized():
+                        raise ValueError(
+                            "task must be fully initialized, references are not allowed"
+                        )
+
                     task_data = task.get_data()
-                    if not isinstance(task_data, TaskEntityData):
-                        raise TypeError("data must be of type TaskEntityData")
+
+                    if task_data is None:
+                        raise TypeError("data cannot be None if task is initialized")
 
                     f_io.write(
                         "- ["

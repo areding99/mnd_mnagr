@@ -13,9 +13,8 @@ def set_task_status(task: TaskDBEntity, status: str) -> None:
         raise Exception("failed to initialize task")
 
     data = task.get_data()
-    if not isinstance(data, TaskEntityData):
-        # this is for mypy - is_intialized() is essentially a 'None' check
-        raise Exception("failed to get task data")
+    if data is None:
+        raise Exception("data cannot be None if task is initialized")
 
     data.status = status
     EntityManager.write(task, TaskDBEntityWriter())

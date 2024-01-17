@@ -9,7 +9,7 @@ if __name__ == "__main__":
 from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
 
 
-class DaylogDBEntity(IDBEntity):
+class DaylogDBEntity(IDBEntity[DaylogEntityData]):
     def __init__(self, path: str, data: IDBEntityData | None = None):
         if (data is not None) and (not isinstance(data, DaylogEntityData)):
             raise TypeError("data must be of type DaylogEntityData")

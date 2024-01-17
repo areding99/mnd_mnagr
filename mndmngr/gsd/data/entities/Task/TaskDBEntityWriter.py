@@ -18,8 +18,8 @@ class TaskDBEntityWriter(IDBEntityWriter):
 
         data = entity.get_data()
 
-        if not isinstance(data, TaskEntityData):
-            raise TypeError("data must be of type TaskEntityData")
+        if data is None:
+            raise ValueError("data cannot be None if entity is initialized")
 
         max_len_val = self._get_max_len_val(data)
 
