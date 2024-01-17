@@ -32,8 +32,8 @@ def get_open_tasks_by_section() -> dict[str, list[TaskDBEntity]]:
 
         tasks = EntityManager.get_many(TaskDBEntity, TaskDBEntityDataParser(), query)
 
-        if not is_list_of_task(tasks):
-            raise TypeError("query did not return a list of TaskDBEntity")
+        if tasks is None:
+            return {}
 
         tasks_by_section[section] = tasks
 

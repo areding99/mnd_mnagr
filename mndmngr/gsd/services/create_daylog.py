@@ -1,6 +1,5 @@
 import os, datetime, uuid, dotenv, sys
 
-
 dotenv.load_dotenv()
 sys.path.append(os.environ["PROJECT_ROOT"])
 
@@ -67,12 +66,7 @@ def get_yesterday(year: int) -> DaylogDBEntity | None:
     query = PathDBQuery()
     query.set_query_args(yesterday)
 
-    res = EntityManager.get(DaylogDBEntity, DaylogDBEntityTaskFirstDataParser(), query)
-
-    if isinstance(res, DaylogDBEntity):
-        return res
-
-    return None
+    return EntityManager.get(DaylogDBEntity, DaylogDBEntityTaskFirstDataParser(), query)
 
 
 def today_exists(path: str) -> bool:

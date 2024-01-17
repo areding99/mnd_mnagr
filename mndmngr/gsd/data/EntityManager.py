@@ -1,5 +1,4 @@
-import os
-from pathlib import Path
+from typing import TypeVar
 from typing import Type
 
 from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
@@ -10,12 +9,14 @@ from mndmngr.gsd.data.queries.IDBMultiQuery import IDBMultiQuery
 from mndmngr.gsd.data.queries.IDBQuery import IDBQuery
 from mndmngr.gsd.data.queries.PathDBQuery import PathDBQuery
 
+T = TypeVar("T", bound=IDBEntity)
+
 
 def get(
-    Entity: Type[IDBEntity],
+    Entity: Type[T],
     parser: IDBEntityDataParser,
     query: IDBQuery,
-) -> IDBEntity | None:
+) -> T | None:
     res = query.run()
 
     if res is None:
@@ -29,10 +30,10 @@ def get(
 
 
 def get_many(
-    Entity: Type[IDBEntity],
+    Entity: Type[T],
     parser: IDBEntityDataParser,
     query: IDBMultiQuery,
-) -> list[IDBEntity] | None:
+) -> list[T] | None:
     res = query.run()
 
     if res is None:
@@ -48,9 +49,9 @@ def get_many(
 
 
 def initialize(
-    ent: IDBEntity,
+    ent: T,
     parser: IDBEntityDataParser,
-) -> IDBEntity:
+) -> T:
     if ent.is_initialized():
         return ent
 
@@ -68,7 +69,7 @@ def initialize(
     return ent
 
 
-def write(ent: IDBEntity, writer: IDBEntityWriter) -> bool:
+def write(ent: T, writer: IDBEntityWriter) -> bool:
     try:
         writer.write(ent)
     except Exception as e:
@@ -76,15 +77,3 @@ def write(ent: IDBEntity, writer: IDBEntityWriter) -> bool:
         return False
 
     return True
-
-
-def create(data: IDBEntityData) -> None:
-    pass
-
-
-def delete(data: IDBEntityData) -> None:
-    pass
-
-
-def delete_at_path(path: str) -> None:
-    pass
