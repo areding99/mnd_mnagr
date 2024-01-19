@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os, datetime, uuid, dotenv, sys
 
 dotenv.load_dotenv()
