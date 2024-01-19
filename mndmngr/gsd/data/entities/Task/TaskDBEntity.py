@@ -1,8 +1,4 @@
-import os, sys, dotenv
-
-if __name__ == "__main__":
-    dotenv.load_dotenv()
-    sys.path.append(os.environ["PROJECT_ROOT"])
+import os
 
 from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
 from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData

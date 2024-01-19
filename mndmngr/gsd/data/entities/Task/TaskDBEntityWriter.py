@@ -1,13 +1,14 @@
+from typing import Any
 from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
 from mndmngr.gsd.data.entities.IDBEntityWriter import IDBEntityWriter
 from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
 from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 
-class TaskDBEntityWriter(IDBEntityWriter):
+class TaskDBEntityWriter(IDBEntityWriter[TaskEntityData]):
     _max_len_key = 11
 
-    def write(self, entity: IDBEntity) -> None:
+    def write(self, entity: IDBEntity[TaskEntityData]) -> None:
         if not isinstance(entity, TaskDBEntity):
             raise TypeError("entity must be of type TaskDBEntity")
 
@@ -18,8 +19,8 @@ class TaskDBEntityWriter(IDBEntityWriter):
 
         data = entity.get_data()
 
-        if data is None:
-            raise ValueError("data cannot be None if entity is initialized")
+        if not isinstance(data, TaskEntityData):
+            raise TypeError("data must be of type TaskEntityData")
 
         max_len_val = self._get_max_len_val(data)
 

@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import Any, TypeVar
 from typing import Type
 
 from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
@@ -9,7 +9,7 @@ from mndmngr.gsd.data.queries.IDBMultiQuery import IDBMultiQuery
 from mndmngr.gsd.data.queries.IDBQuery import IDBQuery
 from mndmngr.gsd.data.queries.PathDBQuery import PathDBQuery
 
-T = TypeVar("T", bound=IDBEntity)
+T = TypeVar("T", bound=IDBEntity[Any])
 
 
 def get(
@@ -69,7 +69,7 @@ def initialize(
     return ent
 
 
-def write(ent: T, writer: IDBEntityWriter) -> bool:
+def write(ent: T, writer: IDBEntityWriter[Any]) -> bool:
     try:
         writer.write(ent)
     except Exception as e:

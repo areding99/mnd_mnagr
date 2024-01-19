@@ -1,10 +1,6 @@
-import os, sys, dotenv
+import os
 from mndmngr.gsd.data.entities.Daylog.DaylogEntityData import DaylogEntityData
 from mndmngr.gsd.data.entities.IDBEntityData import IDBEntityData
-
-if __name__ == "__main__":
-    dotenv.load_dotenv()
-    sys.path.append(os.environ["PROJECT_ROOT"])
 
 from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
 

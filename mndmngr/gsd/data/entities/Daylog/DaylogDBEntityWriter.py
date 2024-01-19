@@ -2,11 +2,10 @@ from mndmngr.gsd.data.entities.Daylog.DaylogDBEntity import DaylogDBEntity
 from mndmngr.gsd.data.entities.Daylog.DaylogEntityData import DaylogEntityData
 from mndmngr.gsd.data.entities.IDBEntity import IDBEntity
 from mndmngr.gsd.data.entities.IDBEntityWriter import IDBEntityWriter
-from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 
-class DaylogDBEntityWriter(IDBEntityWriter):
-    def write(self, entity: IDBEntity) -> None:
+class DaylogDBEntityWriter(IDBEntityWriter[DaylogEntityData]):
+    def write(self, entity: IDBEntity[DaylogEntityData]) -> None:
         if not isinstance(entity, DaylogDBEntity):
             raise TypeError("entity must be of type DaylogDBEntity")
 
