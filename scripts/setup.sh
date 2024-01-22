@@ -3,9 +3,9 @@
 
 SCRIPT_PATH=$(realpath "$0")
 SCRIPTS_DIR="$(dirname "$SCRIPT_PATH")"
-UTILITY_DIR="$(dirname "$SCRIPTS_DIR")"
+ROOT="$(dirname "$SCRIPTS_DIR")"
 VENV_NAME="venv"
-VENV_PATH="$UTILITY_DIR/$VENV_NAME"
+VENV_PATH="$ROOT/$VENV_NAME"
 
 
 if [ ! -d "$VENV_PATH" ]; then
@@ -18,12 +18,23 @@ fi
 
 source $VENV_PATH/bin/activate
 
+read -p "Starting the project in 'dev' mode will install dependecies used in development only.  Do you want to start the project in 'dev' mode? [y/n] " dev_mode_response
+
 echo "Installing dependencies..."
-pip install -r "$UTILITY_DIR/requirements.txt"
+pip install -r "$ROOT/requirements/common.txt"
 
-read -p "Adding the executable to your path will allow you to run utilities from anywhere.  Do you want to add the executable to your path? [y/n] " response
+if [[ "$dev_mode_response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+    echo "Installing dev dependencies..."
+    pip install -r "$ROOT/requirements/dev.txt"
+else 
+    echo "Installing prod dependencies..."
+    pip install -r "$ROOT/requirements/prod.txt"
+fi
 
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+
+read -p "Adding the executable to your path will allow you to run utilities from anywhere.  Do you want to add the executable to your path? [y/n] " update_path_response
+
+if [[ "$update_path_response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     if [ ! $SHELL = "/bin/zsh" ]; then
         echo "This script only supports zsh."
         echo "The executable will not be added to your path. Continuing..."
@@ -32,14 +43,14 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
 
 
         echo "Adding executable to path..."
-        ln -s $SCRIPTS_DIR/runner.sh $UTILITY_DIR/$VENV_NAME/bin/$executable_name
-        chmod +x $UTILITY_DIR/$VENV_NAME/bin/$executable_name
+        ln -s $SCRIPTS_DIR/runner.sh $ROOT/$VENV_NAME/bin/$executable_name
+        chmod +x $ROOT/$VENV_NAME/bin/$executable_name
 
         if [ ! -f ~/.zshenv ]; then
             touch ~/.zshenv
         fi
 
-        echo "export PATH=$UTILITY_DIR/$VENV_NAME/bin:\$PATH" >> ~/.zshenv
+        echo "export PATH=$ROOT/$VENV_NAME/bin:\$PATH" >> ~/.zshenv
     fi
 fi
 
@@ -50,14 +61,14 @@ read -p "- Relative path (from project directory) to your daily logs' folder: " 
 
 
 # check if the utility dir contains .env
-if [ ! -f "$UTILITY_DIR/.env" ]; then
-    touch "$UTILITY_DIR/.env"
+if [ ! -f "$ROOT/.env" ]; then
+    touch "$ROOT/.env"
 fi
 
 # write to .env
-echo "PROJECT_ROOT=\"$project_dir\"" >> "$UTILITY_DIR/.env"
-echo "DAILY_LOG_REL_PATH=\"$daily_log_rel_path\"" >> "$UTILITY_DIR/.env"
-echo "TASKS_REL_PATH=\"$tasks_rel_path\"" >> "$UTILITY_DIR/.env"
+echo "PROJECT_ROOT=\"$project_dir\"" >> "$ROOT/.env"
+echo "DAILY_LOG_REL_PATH=\"$daily_log_rel_path\"" >> "$ROOT/.env"
+echo "TASKS_REL_PATH=\"$tasks_rel_path\"" >> "$ROOT/.env"
 
 deactivate
 
