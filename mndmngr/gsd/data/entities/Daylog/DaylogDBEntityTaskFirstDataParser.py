@@ -1,5 +1,4 @@
 import re
-from mndmngr.config.config_parser import ConfigParser
 from mndmngr.gsd.data.entities.Daylog.DaylogEntityData import DaylogEntityData
 from mndmngr.gsd.data.entities.IDBEntityDataParser import IDBEntityDataParser
 from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
@@ -120,17 +119,11 @@ def _parse_tasks_section(
 ) -> dict[str, list[tuple[TaskDBEntity, bool]]]:
     tasks_by_section: dict[str, list[tuple[TaskDBEntity, bool]]] = {}
 
-    config = ConfigParser().get_config()
-    if not config:
-        raise Exception("config not found")
-
-    subsection_delim = config.daylog.subsection_delimiter
-
     section_name = ""
 
     for line in raw:
-        if line.startswith(subsection_delim):
-            section_name = line[len(subsection_delim) :].strip()
+        if line.startswith("##"):
+            section_name = line[len("##") :].strip()
             tasks_by_section[section_name] = []
             continue
 
@@ -152,12 +145,7 @@ def _parse_tasks_section(
 
 def _parse_todos_section(raw: list[str]) -> dict[str, list[tuple[str, bool]]]:
     todos: dict[str, list[tuple[str, bool]]] = {}
-
-    config = ConfigParser().get_config()
-    if not config:
-        raise Exception("config not found")
-
-    subsection_delim = config.daylog.subsection_delimiter
+    subsection_delim = "##"
 
     section_name = ""
 
