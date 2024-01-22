@@ -1,17 +1,9 @@
-import os
-import re
-import dotenv
-import questionary
-import datetime
-import uuid
+import os, sys, re, dotenv, questionary, datetime, uuid
+
+dotenv.load_dotenv()
+sys.path.append(os.environ["PROJECT_ROOT"])
+
 from typing import Any, NamedTuple
-
-if __name__ == "__main__":
-    import sys
-
-    dotenv.load_dotenv()
-    sys.path.append(os.environ["PROJECT_ROOT"])
-
 from mndmngr.config.config_parser import ConfigParser, Config
 from mndmngr.lib.typing.is_list_of_str import is_list_of_str
 from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
@@ -250,7 +242,7 @@ def create_task_from_cli() -> None:
         parsed_input.tags,
         parsed_input.priority,
         parsed_input.due,
-        [parsed_input.overview],
+        ["# body \n\n" + parsed_input.overview],
     )
 
     task = TaskDBEntity(data.path, data)
@@ -260,3 +252,6 @@ def create_task_from_cli() -> None:
         print("task created at: " + task.get_path())
     else:
         print("task creation failed")
+
+
+create_task_from_cli()

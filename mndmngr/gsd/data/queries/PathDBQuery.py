@@ -9,7 +9,6 @@ class PathDBQuery(IDBQuery):
         ] = self._query_args
 
         if not os.path.exists(path):
-            print("could not find file at: " + path)
             return None
 
         with open(path, "r") as f_io:

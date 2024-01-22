@@ -1,4 +1,5 @@
 import json
+import os
 from typing import NamedTuple, Any, Self
 from mndmngr.lib.typing.is_list_of_str import is_list_of_str
 
@@ -39,7 +40,7 @@ class ConfigParser(object):
         if self.config is not None:
             return self.config
 
-        with open("./mndmngr/config/config.json") as f_io:
+        with open(os.environ["PROJECT_ROOT"] + "/mndmngr/config/config.json") as f_io:
             self.config = ConfigParser.parse_config(json.load(f_io))
 
         return self.config
