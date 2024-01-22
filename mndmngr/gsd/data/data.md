@@ -5,7 +5,6 @@ title: Entity Management
 
 classDiagram
 
-
   class IDBEntityData{
     <<Abstract>>
   }
@@ -34,11 +33,12 @@ classDiagram
     +str path
     +str created
     +str id
+    +str header
     +dict[str, list[tuple[TaskDBEntity, bool]]] tasks
-    +list[tuple[str, bool]] todos
-    +list[str] notes
-    +list[str] summary
-    +list[str] yesterday_summary
+    +dict[str, list[tuple[str, bool]]] todos
+    +str notes
+    +str summary
+    +str yesterday_summary
 
 
     +__init__(list[str]): DaylogEntityData
@@ -46,16 +46,21 @@ classDiagram
 
   IDBEntity o-- IDBEntityData
 
-  class IDBEntity {
+  class IDBEntity~IDBEntityData~ {
     <<Abstract>>
-    -str _path
-    -IDBEntityData _data
+    -str _rel_path
 
-    +__init__(str, IDBEntityData | None): IDBEntity*
+    +get_entity_path_rel(): str$*
+    +get_entity_path_absolute(): str$*
+    +get_entity_path_prefix(): str$
+    +get_absolute_path(): str
     +get_path(): str
-    +get_data(): IDBEntityData
+    +is_initialized(): bool
   }
-
+  IDBEntity : -~IDBEntityData~ _data
+  IDBEntity : +__init__(str, ~IDBEntityData~ | None) IDBEntity*
+  IDBEntity : +get_data() ~IDBEntityData~
+  IDBEntity : +set_data(~IDBEntityData~) None
 
   IDBEntity <|-- TaskDBEntity
   class TaskDBEntity {
@@ -84,21 +89,61 @@ classDiagram
 
   class IDBQuery{
     <<Abstract>>
-    +run(str): dict[str, list[str]] | None*
+    +args: tuple[str, ...]
+
+    +run(): list[str] | None*
+    +set_query_args(tuple[str, ...]): None
   }
 
   IDBQuery <|-- PathDBQuery
   class PathDBQuery{
-    +run(str): dict[str, list[str]] | None
+    +run(): list[str] | None
   }
 
+  class IDBMultiQuery{
+    <<Abstract>>
+    +args: tuple[str, ...]
+
+    +run(): dict[str, list[str]] | None*
+    +set_query_args(tuple[str, ...]): None
+  }
+
+  IDBMultiQuery <|-- GlobPathDBQuery
+  class GlobPathDBQuery{
+    +run(): dict[str, list[str]] | None
+  }
+
+  class IDBEntityWriter{
+    <<Abstract>>
+    +write(IDBEntity): None*
+  }
+
+  IDBEntityWriter <|-- TaskDBEntityWriter
+  class TaskDBEntityWriter{
+    +write(TaskDBEntity): None
+  }
+
+  IDBEntityWriter <|-- DaylogDBEntityWriter
+  class DaylogDBEntityWriter{
+    +write(DaylogDBEntity): None
+  }
 
   EntityManager ..> IDBEntity
   EntityManager ..> IDBQuery
+  EntityManager ..> IDBMultiQuery
   EntityManager ..> IDBEntityDataParser
+  EntityManager ..> IDBEntityWriter
+
+  note for EntityManager "The EntityManager is a collection of stateless behavior. 
+    Using a class to conform to an oop paradigm achieves nothing bar 
+    syntactics, so the EntityManager is merely a namespace, not a class."
 
   class EntityManager{
-    get(Type[IDBEntity], IDBQuery, IDBEntityDataParser): list[IDBEntity] | None
   }
+
+  EntityManager :  +get(Type[~IDBEntity~], IDBQuery, IDBEntityDataParser) ~IDBEntity~ | None
+  EntityManager : +get_many(Type[~IDBEntity~], IDBMultiQuery, IDBEntityDataParser) dict[str, ~IDBEntity~] | None
+  EntityManager : +initialize(~IDBEntity~, IDBEntityDataParser) ~IDBEntity~
+  EntityManager : +write(IDBEntityWriter) bool
 
 ```
