@@ -46,7 +46,7 @@ def get_yesterday_f_name(year: int) -> str | None:
             os.environ["PROJECT_ROOT"]
             + os.environ["DAILY_LOG_REL_PATH"]
             + "/"
-            + str(year - 1)
+            + str(year)
             + "/"
             + max(this_year_dir_contents)
         )
