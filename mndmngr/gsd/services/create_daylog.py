@@ -5,7 +5,6 @@ import os, datetime, uuid, dotenv, sys
 dotenv.load_dotenv()
 sys.path.append(os.environ["PROJECT_ROOT"])
 
-from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 from mndmngr.gsd.data.entities.Daylog.DaylogDBEntity import DaylogDBEntity
 from mndmngr.gsd.data.entities.Daylog.DaylogDBEntityWriter import DaylogDBEntityWriter
 from mndmngr.gsd.data.entities.Daylog.DaylogDBEntityTaskFirstDataParser import (
@@ -25,17 +24,27 @@ import mndmngr.gsd.data.EntityManager as EntityManager
 
 
 def create_year_if_not_exists(year: int) -> None:
-    if not os.path.exists(os.environ["DAILY_LOG_PATH"] + "/" + str(year)):
-        os.mkdir(os.environ["DAILY_LOG_PATH"] + "/" + str(year))
+    if not os.path.exists(
+        os.environ["PROJECT_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year)
+    ):
+        os.mkdir(
+            os.environ["PROJECT_ROOT"]
+            + os.environ["DAILY_LOG_REL_PATH"]
+            + "/"
+            + str(year)
+        )
 
 
 def get_yesterday_f_name(year: int) -> str | None:
     # check this year for yesterday's log
-    this_year_dir_contents = os.listdir(os.environ["DAILY_LOG_PATH"] + "/" + str(year))
+    this_year_dir_contents = os.listdir(
+        os.environ["PROJECT_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year)
+    )
 
     if len(this_year_dir_contents) != 0:
         return (
-            os.environ["DAILY_LOG_PATH"]
+            os.environ["PROJECT_ROOT"]
+            + os.environ["DAILY_LOG_REL_PATH"]
             + "/"
             + str(year - 1)
             + "/"
@@ -44,12 +53,16 @@ def get_yesterday_f_name(year: int) -> str | None:
 
     # check last year for a note if there's not one this year
     prev_year_dir_contents = os.listdir(
-        os.environ["DAILY_LOG_PATH"] + "/" + str(year - 1)
+        os.environ["PROJECT_ROOT"]
+        + os.environ["DAILY_LOG_REL_PATH"]
+        + "/"
+        + str(year - 1)
     )
 
     if len(prev_year_dir_contents) != 0:
         return (
-            os.environ["DAILY_LOG_PATH"]
+            os.environ["PROJECT_ROOT"]
+            + os.environ["DAILY_LOG_REL_PATH"]
             + "/"
             + str(year - 1)
             + "/"
@@ -81,6 +94,8 @@ def today_exists(path: str) -> bool:
 def create_daylog() -> None:
     date = datetime.datetime.now()
     year = date.year
+
+    # TODO seems to be a bug somewhere that doesn't handle the previous year
 
     # create metadata as necessary
     today = str(date.date())

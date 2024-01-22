@@ -11,9 +11,7 @@
             "env": { "PYTHONPATH": "${workspaceRoot}",
                     "PROJECT_ROOT":"/Users/andyreding/Desktop/task_management",
                     "DAILY_LOG_REL_PATH": "/demo_files/logs",
-                    "DAILY_LOG_PATH": "/Users/andyreding/Desktop/task_management/demo_files/logs",
                     "TASKS_REL_PATH": "/demo_files/tasks",
-                    "TASKS_PATH": "/Users/andyreding/Desktop/task_management/demo_files/tasks",
                 }
         }
     ]

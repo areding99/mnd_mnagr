@@ -18,4 +18,4 @@ class TaskDBEntity(IDBEntity[TaskEntityData]):
 
     @staticmethod
     def get_entity_path_absolute() -> str:
-        return os.environ["TASKS_PATH"]
+        return IDBEntity.get_entity_path_prefix() + TaskDBEntity.get_entity_path_rel()
