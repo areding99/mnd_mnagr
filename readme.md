@@ -27,10 +27,11 @@ Support for various utilities like:
 - [] searching for links to a given file
 - [] updating links when a file is moved
 - [] print list of all links pointing at a given location to command line (search)
+- [] collection of templates for meetings, notes, etc.
 
 
 # installation
 
-1. download the repo & run `chmod +x ./setup.sh`
+1. download the repo, navigate to the scripts folder, & run `chmod +x ./setup.sh`
 1. run `./setup.sh` and follow the prompts
 1. if desired, edit the config (/mndmngr/config) to configure task formatting & order
