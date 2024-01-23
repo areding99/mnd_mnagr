@@ -13,8 +13,6 @@ Allows for parsing and management of file formats relevant to getting stuff done
 Configuration allows for a limited degree of customization to suit a file system, but the tool was written with the author's personal system in mind. Forking for a greater degree of customization is encouraged, and can be easily achieved by writing new parsers for unique file formats, or by writing new formats altogether (see /mndmngr/data/design.md).
 
 Planned features include:
-- [] support for meetings
-  - [] auto-create todos & tasks from meeting log
 - [] summarization features + integration w/ email client for weekly email
   - config file for tags, status, etc
 - [] cli tool for tasks due today
