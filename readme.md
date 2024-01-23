@@ -13,6 +13,7 @@ Allows for parsing and management of file formats relevant to getting stuff done
 Configuration allows for a limited degree of customization to suit a file system, but the tool was written with the author's personal system in mind. Forking for a greater degree of customization is encouraged, and can be easily achieved by writing new parsers for unique file formats, or by writing new formats altogether (see /mndmngr/data/design.md).
 
 Planned features include:
+
 - [] summarization features + integration w/ email client for weekly email
   - config file for tags, status, etc
 - [] cli tool for tasks due today
@@ -21,12 +22,12 @@ Planned features include:
 
 A _PKM_ (personal knowledge management) utility:
 
-Support for various utilities like: 
+Support for various utilities like:
+
 - [] searching for links to a given file
 - [] updating links when a file is moved
 - [] print list of all links pointing at a given location to command line (search)
 - [] collection of templates for meetings, notes, etc.
-
 
 # installation
 
