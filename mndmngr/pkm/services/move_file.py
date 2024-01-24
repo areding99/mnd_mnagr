@@ -27,10 +27,6 @@ file_name = file_path_rel.split("/")[-1]
 new_path_rel = new_path_abs[len(user_root) :] + "/" + file_name
 full_new_path_abs = new_path_abs + "/" + file_name
 
-print("new path rel" + new_path_rel)
-print("full new path abs" + full_new_path_abs)
-
-
 try:
     os.rename(file_path_abs, full_new_path_abs)
 except:
