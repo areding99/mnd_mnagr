@@ -58,6 +58,7 @@ echo "Setting environment - please specify: "
 read -p "- Absolute path to your project's directory: " project_dir
 read -p "- Relative path (from project directory) to your tasks' folder: " tasks_rel_path
 read -p "- Relative path (from project directory) to your daily logs' folder: " daily_log_rel_path
+read -p "- Relative path (from project directory) to your notes' folder: " notes_rel_path
 
 
 # check if the utility dir contains .env
@@ -66,9 +67,11 @@ if [ ! -f "$ROOT/.env" ]; then
 fi
 
 # write to .env
+echo "MND_MNGR_ROOT=\"$ROOT\"" >> "$ROOT/.env"
 echo "PROJECT_ROOT=\"$project_dir\"" >> "$ROOT/.env"
-echo "DAILY_LOG_REL_PATH=\"$daily_log_rel_path\"" >> "$ROOT/.env"
 echo "TASKS_REL_PATH=\"$tasks_rel_path\"" >> "$ROOT/.env"
+echo "DAILY_LOG_REL_PATH=\"$daily_log_rel_path\"" >> "$ROOT/.env"
+echo "NOTES_REL_PATH=\"$notes_rel_path\"" >> "$ROOT/.env"
 
 deactivate
 

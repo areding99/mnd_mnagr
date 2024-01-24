@@ -3,7 +3,7 @@
 import os, datetime, uuid, dotenv, sys
 
 dotenv.load_dotenv()
-sys.path.append(os.environ["PROJECT_ROOT"])
+sys.path.append(os.environ["MND_MNGR_ROOT"])
 
 from mndmngr.gsd.data.entities.Daylog.DaylogDBEntity import DaylogDBEntity
 from mndmngr.gsd.data.entities.Daylog.DaylogDBEntityWriter import DaylogDBEntityWriter

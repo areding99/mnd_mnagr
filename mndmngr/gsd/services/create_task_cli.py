@@ -1,7 +1,7 @@
 import os, sys, re, dotenv, questionary, datetime, uuid
 
 dotenv.load_dotenv()
-sys.path.append(os.environ["PROJECT_ROOT"])
+sys.path.append(os.environ["MND_MNGR_ROOT"])
 
 from typing import Any, NamedTuple
 from mndmngr.config.config_parser import ConfigParser, Config

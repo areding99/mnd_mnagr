@@ -2,7 +2,7 @@ import os, sys, dotenv
 
 if __name__ == "__main__":
     dotenv.load_dotenv()
-    sys.path.append(os.environ["PROJECT_ROOT"])
+    sys.path.append(os.environ["MND_MNGR_ROOT"])
 
 from mndmngr.config.config_parser import ConfigParser, Config
 from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
