@@ -1,12 +1,4 @@
-import os
 import re
-import sys
-
-import dotenv
-
-if __name__ == "__main__":
-    dotenv.load_dotenv()
-    sys.path.append(os.environ["PROJECT_ROOT"])
 
 
 def get_first_md_link_path(line: str) -> str | None:

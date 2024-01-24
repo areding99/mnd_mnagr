@@ -10,11 +10,11 @@ new_path_rel = args[2]
 print("Moving file...")
 
 file_name = file_path_rel.split("/")[-1]
-file_path_full = os.environ["PROJECT_ROOT"] + file_path_rel
+file_path_full = os.environ["USER_ROOT"] + file_path_rel
 
 if new_path_rel[-1] == "/":
     new_path_rel = new_path_rel[:-1]
-new_path_full = os.environ["PROJECT_ROOT"] + new_path_rel + "/" + file_name
+new_path_full = os.environ["USER_ROOT"] + new_path_rel + "/" + file_name
 
 try:
     os.rename(file_path_full, new_path_full)
@@ -24,7 +24,7 @@ except:
 
 print("Updating references...")
 
-for root, dirs, files in os.walk((os.environ["PROJECT_ROOT"] + "/example")):
+for root, dirs, files in os.walk((os.environ["USER_ROOT"] + "/example")):
     for file in files:
         with open(os.path.join(root, file), "r+") as f:
             lines = f.readlines()

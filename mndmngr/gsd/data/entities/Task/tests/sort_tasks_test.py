@@ -2,7 +2,7 @@ import pytest
 import sys, dotenv, os
 
 dotenv.load_dotenv()
-sys.path.append(os.environ["PROJECT_ROOT"])
+sys.path.append(os.environ["MND_MNGR_ROOT"])
 
 from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
 from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData

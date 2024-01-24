@@ -26,7 +26,7 @@ class IDBEntity(ABC, Generic[T]):
 
     @staticmethod
     def get_entity_path_prefix() -> str:
-        return os.environ["PROJECT_ROOT"]
+        return os.environ["USER_ROOT"]
 
     def get_absolute_path(self) -> str:
         return IDBEntity.get_entity_path_prefix() + self.get_path()

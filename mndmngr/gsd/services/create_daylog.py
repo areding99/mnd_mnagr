@@ -25,25 +25,22 @@ import mndmngr.gsd.data.EntityManager as EntityManager
 
 def create_year_if_not_exists(year: int) -> None:
     if not os.path.exists(
-        os.environ["PROJECT_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year)
+        os.environ["USER_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year)
     ):
         os.mkdir(
-            os.environ["PROJECT_ROOT"]
-            + os.environ["DAILY_LOG_REL_PATH"]
-            + "/"
-            + str(year)
+            os.environ["USER_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year)
         )
 
 
 def get_yesterday_f_name(year: int) -> str | None:
     # check this year for yesterday's log
     this_year_dir_contents = os.listdir(
-        os.environ["PROJECT_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year)
+        os.environ["USER_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year)
     )
 
     if len(this_year_dir_contents) != 0:
         return (
-            os.environ["PROJECT_ROOT"]
+            os.environ["USER_ROOT"]
             + os.environ["DAILY_LOG_REL_PATH"]
             + "/"
             + str(year)
@@ -53,15 +50,12 @@ def get_yesterday_f_name(year: int) -> str | None:
 
     # check last year for a note if there's not one this year
     prev_year_dir_contents = os.listdir(
-        os.environ["PROJECT_ROOT"]
-        + os.environ["DAILY_LOG_REL_PATH"]
-        + "/"
-        + str(year - 1)
+        os.environ["USER_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year - 1)
     )
 
     if len(prev_year_dir_contents) != 0:
         return (
-            os.environ["PROJECT_ROOT"]
+            os.environ["USER_ROOT"]
             + os.environ["DAILY_LOG_REL_PATH"]
             + "/"
             + str(year - 1)
