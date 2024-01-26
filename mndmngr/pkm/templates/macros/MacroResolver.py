@@ -1,9 +1,9 @@
-from datetime import date
 import os
 import sys
 import dotenv
 import pkgutil
 import importlib
+from datetime import datetime
 
 dotenv.load_dotenv()
 sys.path.append(os.environ["MND_MNGR_ROOT"])
@@ -12,14 +12,11 @@ from mndmngr.pkm.templates.macros.Macro import Macro
 
 
 class MacroResolver:
-    def __init__(
-        self,
-        file_path_rel: str,
-        file_path_abs: str,
-    ):
+    def __init__(self, file_path_rel: str, file_path_abs: str, name: str):
         self._file_path_rel = file_path_rel
         self._file_path_abs = file_path_abs
-        self._date = date.today()
+        self._date = datetime.now()
+        self._name = name
 
         self._macro_defs_rel_path = os.environ["MACRO_REL_PATH"]
         self._macro_defs_abs_path = (
@@ -45,7 +42,9 @@ class MacroResolver:
                 macro_defs.append(getattr(module, class_name))
 
         for m_def in macro_defs:
-            instance = m_def(self._date, self._file_path_rel, self._file_path_abs)
+            instance = m_def(
+                self._name, self._file_path_rel, self._file_path_abs, self._date
+            )
             macros[instance.get_key()] = instance
 
         return macros
@@ -58,8 +57,3 @@ class MacroResolver:
             raise Exception(f"Macro {macro} not found")
 
         return self._macros[macro].resolve()
-
-
-m = MacroResolver("/path/one", "abs/path/one")
-
-print(m.resolve_key("$YEAR"))

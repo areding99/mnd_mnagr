@@ -16,5 +16,7 @@ if not file_path_abs.startswith(user_root):
     sys.exit(1)
 
 
-def create(file_path_rel: str, file_path_abs: str, template_path: str) -> None:
-    m = MacroResolver(file_path_rel, file_path_abs)
+def create(
+    file_path_rel: str, file_path_abs: str, file_name: str, template_path: str
+) -> None:
+    m = MacroResolver(file_path_rel, file_path_abs, file_name)
