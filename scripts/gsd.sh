@@ -36,5 +36,3 @@ else
 fi
 
 deactivate
-
-
