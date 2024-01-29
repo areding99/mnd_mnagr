@@ -39,12 +39,19 @@ if [[ "$update_path_response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
         echo "This script only supports zsh."
         echo "The executable will not be added to your path. Continuing..."
     else 
-        read -p "What would you like to call the executable? " executable_name
+        read -p "What would you like to call the gsd executable? " gsd_executable_name
+
+        echo "Adding gsd executable to path..."
+        ln -s $SCRIPTS_DIR/gsd.sh $ROOT/$VENV_NAME/bin/$gsd_executable_name
+        chmod +x $ROOT/$VENV_NAME/bin/$gsd_executable_name
 
 
-        echo "Adding executable to path..."
-        ln -s $SCRIPTS_DIR/runner.sh $ROOT/$VENV_NAME/bin/$executable_name
-        chmod +x $ROOT/$VENV_NAME/bin/$executable_name
+        read -p "What would you like to call the pkm executable? " pkm_executable_name
+
+        echo "Adding pkm executable to path..."
+        ln -s $SCRIPTS_DIR/pkm.sh $ROOT/$VENV_NAME/bin/$pkm_executable_name
+        chmod +x $ROOT/$VENV_NAME/bin/$pkm_executable_name
+
 
         if [ ! -f ~/.zshenv ]; then
             touch ~/.zshenv

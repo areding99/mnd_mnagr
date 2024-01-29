@@ -1,6 +1,6 @@
 #!/bin/bash
 
-UTILITY_NAME="mnd_mngr"
+UTILITY_NAME="mnd_mngr_gsd_util"
 SCRIPT_PATH=$(realpath "$0")
 SCRIPTS_DIR="$(dirname "$SCRIPT_PATH")"
 PROJECT_DIR="$(dirname "$SCRIPTS_DIR")"
@@ -27,9 +27,9 @@ utility=$1
 
 source $PROJECT_DIR/$VENV_NAME/bin/activate
 
-if [ $utility = "create_daylog" ]; then
+if [ "$utility" == "create_daylog" ]; then
     python $PROJECT_DIR/mndmngr/gsd/services/create_daylog.py
-elif [ $utility = "create_task" ]; then
+elif [ "$utility" == "create_task" ]; then
     python $PROJECT_DIR/mndmngr/gsd/services/create_task_cli.py
 else
     HELP

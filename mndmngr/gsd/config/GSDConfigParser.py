@@ -21,7 +21,7 @@ class GSDConfig(NamedTuple):
     tasks: TasksSection
 
 
-REL_PATH_TO_CONFIG = "/mndmngr/config/config.json"
+REL_PATH_TO_CONFIG = "/mndmngr/gsd/config/config.json"
 
 
 class GSDConfigParser(object):

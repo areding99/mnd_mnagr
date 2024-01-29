@@ -1,31 +1,27 @@
 import os
-import sys
-import dotenv
 import pkgutil
 import importlib
 from datetime import datetime
-
-dotenv.load_dotenv()
-sys.path.append(os.environ["MND_MNGR_ROOT"])
 
 from mndmngr.pkm.templates.macros.Macro import Macro
 
 
 class MacroResolver:
+    _REL_PATH_TO_MACRO_DEFS = "/mndmngr/pkm/templates/macros/macro_defs"
+
     def __init__(self, file_path_rel: str, file_path_abs: str, name: str):
         self._file_path_rel = file_path_rel
         self._file_path_abs = file_path_abs
         self._date = datetime.now()
         self._name = name
 
-        self._macro_defs_rel_path = os.environ["MACRO_REL_PATH"]
         self._macro_defs_abs_path = (
-            os.environ["MND_MNGR_ROOT"] + self._macro_defs_rel_path
+            os.environ["MND_MNGR_ROOT"] + self._REL_PATH_TO_MACRO_DEFS
         )
-        self._import_path = self._macro_defs_rel_path.replace("/", ".")[1:]
-        self._macros = self.__get_macro_defs()
+        self._import_path = self._REL_PATH_TO_MACRO_DEFS.replace("/", ".")[1:]
+        self._macros = self._get_macro_defs()
 
-    def __get_macro_defs(self) -> dict[str, Macro]:
+    def _get_macro_defs(self) -> dict[str, Macro]:
         macro_defs = []
         macros: dict[str, Macro] = {}
 
