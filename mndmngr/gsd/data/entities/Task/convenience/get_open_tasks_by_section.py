@@ -1,16 +1,6 @@
-import os, dotenv
-
-if __name__ == "__main__":
-    import sys
-
-    dotenv.load_dotenv()
-    sys.path.append(os.environ["MND_MNGR_ROOT"])
-
 from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
-from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 from mndmngr.gsd.data.entities.Task.TaskDBEntityDataParser import TaskDBEntityDataParser
 from mndmngr.gsd.data.queries.GlobPathDBQuery import GlobPathDBQuery
-from mndmngr.lib.typing.is_list_of_task import is_list_of_task
 from mndmngr.gsd.data.entities.Task.convenience.get_task_sections import (
     get_task_sections,
 )

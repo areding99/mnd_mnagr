@@ -4,7 +4,7 @@ dotenv.load_dotenv()
 sys.path.append(os.environ["MND_MNGR_ROOT"])
 
 from typing import Any, NamedTuple
-from mndmngr.config.GSDConfigParser import GSDConfigParser, GSDConfig
+from mndmngr.gsd.config.GSDConfigParser import GSDConfigParser, GSDConfig
 from mndmngr.lib.typing.is_list_of_str import is_list_of_str
 from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
 from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData

@@ -2,7 +2,6 @@ from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
 from mndmngr.gsd.data.entities.Task.TaskDBEntityDataParser import TaskDBEntityDataParser
 import mndmngr.gsd.data.EntityManager as EntityManager
 from mndmngr.gsd.data.entities.Task.TaskDBEntityWriter import TaskDBEntityWriter
-from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 
 def set_task_status(task: TaskDBEntity, status: str) -> None:

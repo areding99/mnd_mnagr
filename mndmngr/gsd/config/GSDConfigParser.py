@@ -21,6 +21,9 @@ class GSDConfig(NamedTuple):
     tasks: TasksSection
 
 
+REL_PATH_TO_CONFIG = "/mndmngr/config/config.json"
+
+
 class GSDConfigParser(object):
     _instance = None
     config: GSDConfig | None = None
@@ -34,7 +37,7 @@ class GSDConfigParser(object):
         if self.config is not None:
             return self.config
 
-        with open(os.environ["MND_MNGR_ROOT"] + "/mndmngr/config/config.json") as f_io:
+        with open(os.environ["MND_MNGR_ROOT"] + REL_PATH_TO_CONFIG) as f_io:
             self.config = GSDConfigParser.parse_config(json.load(f_io))
 
         return self.config
