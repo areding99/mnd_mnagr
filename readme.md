@@ -16,8 +16,6 @@ Planned features include:
 
 - [] cli analytics (i.e. tasks due today, tasks completed in the past week, compilations of summaries over a period of time, etc.)
 
-#### design
-
 ## PKM
 
 A _PKM_ (personal knowledge management) utility:
