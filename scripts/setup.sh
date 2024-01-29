@@ -63,6 +63,7 @@ fi
 
 echo "Setting environment - please specify: "
 read -p "- Absolute path to your project's directory: " user_root
+echo "For the following, leave blank if the relative path is the same as the absolute path above."
 read -p "- Relative path (from project directory) to your tasks' folder: " tasks_rel_path
 read -p "- Relative path (from project directory) to your daily logs' folder: " daily_log_rel_path
 read -p "- Relative path (from project directory) to your notes' folder: " notes_rel_path

@@ -34,24 +34,34 @@ def create_year_if_not_exists(year: int) -> None:
 
 def get_yesterday_f_name(year: int) -> str | None:
     # check this year for yesterday's log
-    this_year_dir_contents = os.listdir(
+    curr_year_dir = (
         os.environ["USER_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year)
     )
 
-    if len(this_year_dir_contents) != 0:
+    if not os.path.exists(curr_year_dir):
+        raise ValueError("current year directory should exist")
+
+    curr_year_dir_contents = os.listdir(curr_year_dir)
+
+    if len(curr_year_dir_contents) != 0:
         return (
             os.environ["USER_ROOT"]
             + os.environ["DAILY_LOG_REL_PATH"]
             + "/"
             + str(year)
             + "/"
-            + max(this_year_dir_contents)
+            + max(curr_year_dir_contents)
         )
 
     # check last year for a note if there's not one this year
-    prev_year_dir_contents = os.listdir(
+    prev_year_dir = (
         os.environ["USER_ROOT"] + os.environ["DAILY_LOG_REL_PATH"] + "/" + str(year - 1)
     )
+
+    if not os.path.exists(prev_year_dir):
+        return None
+
+    prev_year_dir_contents = os.listdir(prev_year_dir)
 
     if len(prev_year_dir_contents) != 0:
         return (
@@ -85,6 +95,50 @@ def today_exists(path: str) -> bool:
     return False
 
 
+def get_sorted_formatted_tasks_by_section() -> (
+    dict[str, list[tuple[TaskDBEntity, bool]]]
+):
+    open_tasks_by_section = get_open_tasks_by_section()
+    sorted_formatted_tasks_by_section: dict[str, list[tuple[TaskDBEntity, bool]]] = {}
+
+    for section in open_tasks_by_section:
+        sorted_formatted_tasks_by_section[section] = [
+            (task, False)
+            for task in sort_tasks(open_tasks_by_section[section])
+            if task is not None
+        ]
+
+    return sorted_formatted_tasks_by_section
+
+
+def collate_and_write_daylog(
+    title: str,
+    path: str,
+    created: str,
+    id: str,
+    header: str,
+    tasks: dict[str, list[tuple[TaskDBEntity, bool]]],
+    todos: dict[str, list[tuple[str, bool]]],
+    notes: str,
+    today_summary: str,
+    yesterday_summary: str,
+) -> None:
+    daylog_data = DaylogEntityData(
+        title,
+        path,
+        created,
+        id,
+        header,
+        tasks,
+        todos,
+        notes,
+        today_summary,
+        yesterday_summary,
+    )
+    daylog = DaylogDBEntity(path, daylog_data)
+    EntityManager.write(daylog, DaylogDBEntityWriter())
+
+
 def create_daylog() -> None:
     date = datetime.datetime.now()
     year = date.year
@@ -108,7 +162,18 @@ def create_daylog() -> None:
     yesterday = get_yesterday(year)
 
     if yesterday is None or not yesterday.is_initialized():
-        # TODO - handle this case
+        collate_and_write_daylog(
+            today,
+            rel_path,
+            created,
+            id,
+            header,
+            get_sorted_formatted_tasks_by_section(),
+            {},
+            "",
+            "",
+            "",
+        )
 
         return None
 
@@ -145,33 +210,18 @@ def create_daylog() -> None:
 
     yesterday_summary = yesterday_data.today_summary
 
-    # gather open tasks
-
-    open_tasks_by_section = get_open_tasks_by_section()
-    sorted_formatted_tasks_by_section: dict[str, list[tuple[TaskDBEntity, bool]]] = {}
-
-    for section in open_tasks_by_section:
-        sorted_formatted_tasks_by_section[section] = [
-            (task, False)
-            for task in sort_tasks(open_tasks_by_section[section])
-            if task is not None
-        ]
-
-    daylog_data = DaylogEntityData(
+    collate_and_write_daylog(
         today,
         rel_path,
         created,
         id,
         header,
-        sorted_formatted_tasks_by_section,
+        get_sorted_formatted_tasks_by_section(),
         formatted_todos_by_section,
         "",
         "",
         yesterday_summary,
     )
-
-    daylog = DaylogDBEntity(rel_path, daylog_data)
-    EntityManager.write(daylog, DaylogDBEntityWriter())
 
 
 # run it!
