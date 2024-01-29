@@ -17,30 +17,30 @@ class TasksSection(NamedTuple):
     task_sort_order: list[str]
 
 
-class Config(NamedTuple):
+class GSDConfig(NamedTuple):
     tasks: TasksSection
 
 
-class ConfigParser(object):
+class GSDConfigParser(object):
     _instance = None
-    config: Config | None = None
+    config: GSDConfig | None = None
 
     def __new__(cls) -> Self:
         if not isinstance(cls._instance, cls):
             cls._instance = object.__new__(cls)
         return cls._instance
 
-    def get_config(self) -> Config | None:
+    def get_config(self) -> GSDConfig | None:
         if self.config is not None:
             return self.config
 
         with open(os.environ["MND_MNGR_ROOT"] + "/mndmngr/config/config.json") as f_io:
-            self.config = ConfigParser.parse_config(json.load(f_io))
+            self.config = GSDConfigParser.parse_config(json.load(f_io))
 
         return self.config
 
     @staticmethod
-    def parse_config(config_json: Any) -> Config:
+    def parse_config(config_json: Any) -> GSDConfig:
         if not config_json:
             raise Exception("config is empty")
 
@@ -68,7 +68,7 @@ class ConfigParser(object):
         if not is_list_of_str(sort_order):
             raise Exception("config does not match expected format")
 
-        return Config(
+        return GSDConfig(
             tasks=TasksSection(
                 task_subdirs_ordered=task_subdirs_ordered,
                 task_config=TaskConfig(

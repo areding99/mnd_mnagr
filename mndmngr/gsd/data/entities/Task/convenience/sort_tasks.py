@@ -4,16 +4,16 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     sys.path.append(os.environ["MND_MNGR_ROOT"])
 
-from mndmngr.config.config_parser import ConfigParser, Config
+from mndmngr.config.GSDConfigParser import GSDConfigParser, GSDConfig
 from mndmngr.gsd.data.entities.Task.TaskDBEntity import TaskDBEntity
 from mndmngr.gsd.data.entities.Task.TaskEntityData import TaskEntityData
 
 
 def sort_tasks(tasks: list[TaskDBEntity]) -> list[TaskDBEntity]:
-    config: Config | None = ConfigParser().get_config()
+    config: GSDConfig | None = GSDConfigParser().get_config()
 
     if not config:
-        # TODO: move exception to ConfigParser
+        # TODO: move exception to GSDConfigParser
         raise ValueError("config is None")
 
     category_sort_order = config.tasks.task_sort_order
