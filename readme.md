@@ -1,6 +1,6 @@
 # MND_MNGR
 
-MND_MNGR (hot new software as evidenced by a lack of vowels) is a collection of utilities for managing a _CST_ (centralized source of truth) based on a recursive file system of a) directories and b) markdown files.
+MND_MNGR (hot new software as evidenced by a lack of vowels) is a collection of utilities for managing a _CST_ (centralized source of truth) based on a recursive file system of a) directories and b) markdown files. It imposes little structure on the file system where possible.
 
 There are two main components:
 
@@ -29,7 +29,8 @@ Support for:
 
 1. download the repo, navigate to the scripts folder, & run `chmod +x ./setup.sh`
 1. run `./setup.sh` and follow the prompts
-1. if desired, edit the config (/mndmngr/gsd/config/config.json) to configure task formatting & order
+1. edit the config (/mndmngr/gsd/config/config.json) to configure task formatting & order
+   1. create the sub-dirs defined in the task config
 1. if desired, add templates (/mndmngr/pkm/templates/template_defs.json) and/or write your own macros (/mndmngr/templates/pkm/macros/)
 
 # usage
