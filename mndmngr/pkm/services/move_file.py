@@ -22,7 +22,7 @@ if not new_path_abs.startswith(user_root):
     print("Dest file not found in project dir. Exiting...")
     sys.exit(1)
 
-file_path_rel = file_path_abs[len(user_root) :]
+file_path_rel = file_path_abs[len(user_root) + 1 :]
 file_name = file_path_rel.split("/")[-1]
 new_path_rel = new_path_abs[len(user_root) :] + "/" + file_name
 full_new_path_abs = new_path_abs + "/" + file_name
