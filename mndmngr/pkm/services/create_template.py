@@ -15,7 +15,7 @@ def create_template(file_path: str, f_name: str, template_name: str) -> None:
         print("Location for file not found in project folder. Exiting...")
         sys.exit(1)
 
-    file_path_rel = file_path_abs[len(user_root) :]
+    file_path_rel = file_path_abs[len(user_root) + 1 :]
 
     config = TemplateConfigParser().get_config()
 
