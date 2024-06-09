@@ -37,11 +37,12 @@ print("Updating references...")
 
 for root, dirs, files in os.walk((user_root)):
     for file in files:
-        with open(os.path.join(root, file), "r+") as f:
-            lines = f.readlines()
-            f.seek(0)
-            for line in lines:
-                if file_path_rel in line:
-                    line = line.replace(file_path_rel, new_path_rel)
-                f.write(line)
-            f.truncate()
+        if file.endswith(".md"):
+            with open(os.path.join(root, file), "r+") as f:
+                lines = f.readlines()
+                f.seek(0)
+                for line in lines:
+                    if file_path_rel in line:
+                        line = line.replace(file_path_rel, new_path_rel)
+                    f.write(line)
+                f.truncate()
